@@ -29,8 +29,11 @@ const assets = defineCollection({
 
     /** src/payloads/<이 값>.md — 복사 페이로드와 연결하는 키 */
     payload: z.string(),
-    /** 분량 배지 (페이로드 줄 수) */
-    lines: z.number().int().positive(),
+    /*
+     * 분량(줄 수)은 필드로 두지 않습니다. 페이로드를 고칠 때마다 손으로
+     * 갱신해야 하고 반드시 어긋납니다. payloadLineCount() 로 계산합니다.
+     * — 자산 A02 §4 "갭은 저장하지 않고 계산한다"와 같은 취지
+     */
 
     /** 업무 arc 정렬 순서 */
     order: z.number().int(),

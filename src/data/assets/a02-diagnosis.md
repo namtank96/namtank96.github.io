@@ -5,7 +5,6 @@ summary: 페인 1건만 있으면 시작하는, 원문·해석·근거·확신�
 kind: template
 install: 프로젝트 docs/ 에 저장하고 에이전트에게 참조시킴
 payload: a02-diagnosis
-lines: 143
 order: 3
 version: v0.1
 updated: 2026-08-10

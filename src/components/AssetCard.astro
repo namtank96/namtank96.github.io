@@ -1,14 +1,16 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { KIND_LABEL, arcStep } from '../lib/labels';
+import { payloadLineCount } from '../lib/payloads';
 
 interface Props {
   entry: CollectionEntry<'assets'>;
 }
 
 const { entry } = Astro.props;
-const { code, title, summary, kind, lines } = entry.data;
+const { code, title, summary, kind } = entry.data;
 const step = arcStep(code);
+const lines = payloadLineCount(entry.data.payload);
 ---
 
 <a class="card" href={`/assets/${entry.id}`}>

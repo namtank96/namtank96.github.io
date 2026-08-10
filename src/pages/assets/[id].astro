@@ -2,7 +2,7 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CopyBlock from '../../components/CopyBlock.astro';
-import { getPayload } from '../../lib/payloads';
+import { getPayload, payloadLineCount } from '../../lib/payloads';
 import { KIND_LABEL, arcStep, formatDate } from '../../lib/labels';
 
 export async function getStaticPaths() {
@@ -29,7 +29,7 @@ const related = d.related
 const meta = [
   KIND_LABEL[d.kind],
   d.install,
-  `${d.lines}줄`,
+  `${payloadLineCount(d.payload)}줄`,
   arcStep(d.code),
   `${d.version} · ${formatDate(d.updated)}`,
 ].filter(Boolean);
