@@ -97,8 +97,11 @@ const experience = defineCollection({
     highlights: z.array(z.string()).min(1),
     skills: z.array(z.string()).default([]),
 
-    /** 이 역할에서 나온 자산 code 목록 — 경력과 자산을 잇는 증거 링크 */
-    assetRefs: z.array(z.string()).default([]),
+    /*
+     * assetRefs 를 두지 않습니다.
+     * 프로젝트 단위로 개편하면서 자산 링크는 projects.assetRefs 가 담당하게 됐고,
+     * 회사 레벨에도 같은 필드를 두면 두 벌이 되어 반드시 어긋납니다.
+     */
 
     order: z.number().int().default(0),
     draft: z.boolean().default(false),

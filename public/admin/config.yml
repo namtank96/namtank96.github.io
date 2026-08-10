@@ -102,11 +102,7 @@ collections:
         widget: list
         required: false
         field: { label: 태그, name: tag, widget: string }
-      - label: 관련 자산
-        name: assetRefs
-        widget: list
-        required: false
-        field: { label: 코드, name: code, widget: string }
+      # 관련 자산은 회사가 아니라 프로젝트에 답니다. 두 곳에 두면 반드시 어긋납니다.
       - { label: 정렬, name: order, widget: number, value_type: int, default: 0 }
       - { label: 비공개, name: draft, widget: boolean, default: false }
       - { label: 본문, name: body, widget: markdown, required: false }

@@ -21,7 +21,6 @@ skills:
   - Claude Code
   - 서브에이전트 설계
   - 스펙 주도 개발
-assetRefs: [A06, A02, A07, A05, A08, A03, A04, A01]
 order: 3
 ---
 
