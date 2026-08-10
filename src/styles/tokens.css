@@ -1,53 +1,70 @@
-/*
- * 디자인 토큰 — Phase 5(hallmark 디자인 패스)에서 교체될 플레이스홀더입니다.
+/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V5
+ * Hallmark · genre: editorial · theme: custom · design-system: design.md
+ * contrast: pass (40-41) · slop: pass (42-45) · honest: pass (46) · chrome: pass (47)
+ * tokens: pass (48) · responsive: pass (49) · mobile: pass (34, 49, 50-57)
+ * vibe: 교정용 붉은 펜이 놓인 따뜻한 종이
+ * paper oklch(97.8% 0.006 85) · accent oklch(46% 0.145 27) warm
+ * display Noto Serif KR · body Pretendard Variable
+ * axes — paper-band: light / display-style: serif / accent-hue: warm
  *
- * 규칙: 컴포넌트는 절대 raw 색상값을 쓰지 않고 var(--color-*) 로만 소비합니다.
- * 그래야 Phase 5에서 이 파일 하나만 갈아끼우면 사이트 전체가 바뀝니다.
+ * 규칙: 컴포넌트는 raw 색상값을 쓰지 않고 var(--color-*) 로만 소비합니다.
  */
 :root {
-  /* ── 색 ─────────────────────────────────────────── */
-  --color-bg: oklch(99% 0.004 95);
-  --color-surface: oklch(97% 0.006 95);
-  --color-border: oklch(89% 0.008 95);
-  --color-text: oklch(24% 0.012 260);
-  --color-text-muted: oklch(52% 0.012 260);
-  --color-accent: oklch(52% 0.16 255);
-  --color-accent-soft: oklch(95% 0.03 255);
+  /* ── 색 ─────────────────────────────────────────────
+   * 순백·순흑을 쓰지 않습니다. 전부 앵커 색조 쪽으로 틴트합니다. */
+  --color-paper: oklch(97.8% 0.006 85);
+  --color-paper-2: oklch(95.4% 0.008 85);
+  --color-ink: oklch(23% 0.014 55);
+  /* 44%: paper 대비 약 5.3:1. 47%로 두면 4.7:1 로 본문 기준(4.5:1)에 여유가 없습니다. */
+  --color-ink-2: oklch(44% 0.012 55);
+  --color-rule: oklch(87% 0.008 80);
 
-  /* ── 타이포 ──────────────────────────────────────
-   * 라틴 서체를 1순위, 한글 서체를 2순위에 둡니다.
-   * 브라우저는 글리프 단위로 폴백하므로 라틴은 앞 서체가,
-   * 한글은 Pretendard 가 담당합니다.
-   * Phase 5에서 앞자리 라틴 서체만 교체하면 됩니다.
-   */
+  /* 교정용 붉은 펜. 뷰포트당 5% 미만. */
+  --color-accent: oklch(46% 0.145 27);
+  --color-accent-ink: oklch(97.8% 0.006 85);
+  --color-focus: oklch(46% 0.145 27);
+
+  /* ── 타이포 ─────────────────────────────────────────
+   * Noto Serif KR 이 한글과 라틴을 모두 담당하므로 글리프 폴백 불일치가 없습니다.
+   * 본문은 Pretendard — 한글 가독성이 높고 dynamic-subset 으로 가볍습니다. */
+  --font-display: 'Noto Serif KR', 'Apple SD Gothic Neo', serif;
   --font-body: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
-  --font-display: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
-  --font-mono: ui-monospace, 'D2Coding', 'Consolas', monospace;
+  --font-mono: ui-monospace, 'D2Coding', Consolas, monospace;
 
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
-  --text-base: 1.0625rem;
+  --text-md: 1.0625rem;
   --text-lg: 1.25rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.75rem;
+  --text-xl: 1.625rem;
+  --text-2xl: 2.125rem;
+  --text-display-s: clamp(2rem, 4vw, 2.75rem);
+  --text-display: clamp(2.5rem, 6vw, 4rem);
 
-  --leading-tight: 1.25;
-  --leading-normal: 1.7;
+  --leading-tight: 1.2;
+  --leading-normal: 1.72;
 
-  /* ── 간격 ────────────────────────────────────────── */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-24: 6rem;
+  /* ── 간격 (4pt) ─────────────────────────────────── */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4.5rem;
+  --space-3xl: 7rem;
 
-  /* ── 기타 ────────────────────────────────────────── */
-  --radius: 6px;
-  --measure: 68ch;
-  --page-max: 940px;
+  /* ── 선·형태 ────────────────────────────────────── */
+  --rule-hair: 1px;
+  --radius-card: 2px;
+  --radius-input: 2px;
+
+  /* ── 모션 ───────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-short: 180ms;
+
+  /* ── 지면 ───────────────────────────────────────── */
+  --measure: 62ch;
+  --page-max: 62rem;
+  --page-gutter: clamp(1rem, 4vw, 2rem);
 }

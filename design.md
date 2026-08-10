@@ -1,0 +1,123 @@
+# Design — 남윤서 포트폴리오
+
+이 앱의 잠긴 디자인 시스템입니다. 모든 페이지 리디자인은 코드를 쓰기 전에 이 파일을 읽습니다.
+페이지마다 새로 만들지 말고, 시스템을 키워야 할 때 이 파일을 고치세요.
+
+## Genre
+
+editorial
+
+내용이 텍스트 위주이고, 사이트의 주제 자체가 "문서를 규격으로 다루는 방법"입니다.
+SaaS·atmospheric·playful 신호는 없습니다.
+
+## Macrostructure family
+
+- **Index 페이지 (`/`)** — Index-First. 마스트헤드 + 짧은 도입 문단 + 헤어라인으로 구분된 8행 색인.
+  카드 없음, 히어로 이미지 없음, 리빌 없음. 링크 자체가 버튼입니다.
+- **Catalogue 페이지 (`/assets`)** — Catalogue. 동일 크기 스펙 카드 그리드 + arc 단계별 카테고리 라벨 밴드.
+  홈이 "훑는 면"이라면 여기는 "골라 들어가는 면"입니다.
+- **Content 페이지 (`/assets/[id]`, `/about`)** — Long Document. 단일 컬럼, 측정폭 60–65ch,
+  섹션 제목이 본문 흐름에서 솟아오르는 형태. 여백이 구분자입니다.
+
+## Theme — custom
+
+카탈로그 테마를 쓰지 않는 이유: 이 사이트의 디스플레이 텍스트는 거의 전부 한글입니다.
+Hallmark 카탈로그의 폰트 allowlist는 전부 라틴 전용이라, 어떤 테마를 골라도 한글은
+시스템 폰트로 폴백해 차별화가 렌더되지 않습니다. 한글 디스플레이 서체를 1순위에 두는
+맞춤 페어링이 필요합니다.
+
+- `--color-paper`    oklch(97.8% 0.006 85)  — 따뜻한 크림. 순백 금지
+- `--color-paper-2`  oklch(95.4% 0.008 85)
+- `--color-ink`      oklch(23% 0.014 55)    — 따뜻한 먹색. 순흑 금지
+- `--color-ink-2`    oklch(47% 0.012 55)
+- `--color-rule`     oklch(87% 0.008 80)
+- `--color-accent`   oklch(46% 0.145 27)    — 교정용 붉은 펜
+- `--color-accent-ink` oklch(97.8% 0.006 85)
+- `--color-focus`    oklch(46% 0.145 27)
+
+**액센트 근거**: 이 사이트는 문서를 감사하고 교정하는 방법을 다룹니다. 교정 부호의 붉은 펜이
+그 내용과 일치합니다. 장식이 아니라 의미입니다. 뷰포트당 5% 미만으로 씁니다.
+
+**세 축** — paper-band: light · display-style: serif(한글 명조 계열) · accent-hue: warm
+
+## Typography
+
+- **Display**: Noto Serif KR, weight 600/700, style normal.
+  한글과 라틴을 한 서체가 모두 담당하므로 폴백 불일치가 없습니다.
+- **Body**: Pretendard Variable, weight 400/600. dynamic-subset 로드.
+- **Mono**: ui-monospace / D2Coding.
+- Display tracking: -0.02em
+- 헤딩은 전부 로만. **이탤릭 헤더 금지.**
+- 측정폭: 본문 60–65ch (`--measure`).
+
+## Spacing
+
+4pt 명명 스케일. 값은 `tokens.css`에 있습니다. 페이지는 반드시 명명 토큰(`var(--space-md)`)을
+쓰고 raw 값을 쓰지 않습니다. **섹션마다 패딩을 같게 주지 않습니다** — 하나는 조이고 하나는 넓힙니다.
+
+## Motion
+
+- Easing: `--ease-out: cubic-bezier(0.16, 1, 0.3, 1)`
+- Reveal 패턴: **없음.** 스크롤 페이드 인 없음. 페이지는 그냥 거기 있습니다.
+- 모션은 복사 버튼 상태 전환 하나뿐입니다.
+- `prefers-reduced-motion: reduce` 시 전환을 끕니다.
+
+## Microinteractions
+
+- 조용한 성공. 복사 성공은 버튼 라벨 교체 2초, 토스트 없음.
+- 포커스 링은 즉시 나타납니다. 절대 전환하지 않습니다.
+- hover 전용 어포던스 금지.
+
+## CTA voice
+
+- Primary: 먹색 채움, radius 2px, 짧은 동사 라벨. `전체 복사` / `자산 보기`
+- Secondary: 헤어라인 아웃라인, 같은 radius.
+- 본문 안의 행동은 버튼이 아니라 타이포그래피 링크(C3)입니다.
+
+## Nav / Footer
+
+- **Nav: N6 신문 마스트헤드** — 상단 발행 라인(소형 대문자) + 가운데 워드마크 + 링크 행 + 이중 괘선.
+- **Footer: Ft4 dense colophon** — 모노 소형 텍스트 한 덩어리. 링크 4열 금지.
+
+## 페이지별 허용
+
+- Index / Catalogue 페이지: enrichment 없음. 타이포그래피만.
+- Content 페이지: 타이포그래피만. 인라인 코드 블록은 본문 측정폭 안에.
+- 어느 페이지도 히어로 이미지·일러스트·3D를 쓰지 않습니다.
+
+## 페이지가 반드시 공유하는 것
+
+- 마스트헤드와 콜로폰
+- 액센트 색과 그 배치(뷰포트당 5% 미만)
+- Noto Serif KR + Pretendard 페어링
+- CTA 보이스(모양·radius·패딩 리듬)
+- 섹션 제목 리듬 — **소형 대문자 eyebrow 금지.** 제목은 display 서체 실제 헤딩입니다.
+
+## 페이지가 달라도 되는 것
+
+- 계열 안에서의 macrostructure
+- 목록 표현(홈=행, /assets=카드)
+- 섹션 패딩 리듬
+
+## Exports
+
+### tokens.css
+
+`src/styles/tokens.css`가 정본입니다. 다른 프로젝트로 옮길 때 그 파일을 그대로 가져가세요.
+
+### DTCG tokens.json
+
+```json
+{
+  "color": {
+    "paper":  { "$value": "oklch(97.8% 0.006 85)", "$type": "color" },
+    "ink":    { "$value": "oklch(23% 0.014 55)",   "$type": "color" },
+    "accent": { "$value": "oklch(46% 0.145 27)",   "$type": "color" }
+  },
+  "font": {
+    "display": { "$value": "Noto Serif KR",       "$type": "fontFamily" },
+    "body":    { "$value": "Pretendard Variable", "$type": "fontFamily" }
+  },
+  "space": { "md": { "$value": "1.5rem", "$type": "dimension" } }
+}
+```

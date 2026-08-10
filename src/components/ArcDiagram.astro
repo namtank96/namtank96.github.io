@@ -28,30 +28,33 @@ const idByCode = new Map(published.map((e) => [e.data.code, e.id]));
   .arc {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2);
+    align-items: baseline;
+    gap: var(--space-3xs);
     margin: 0;
     padding: 0;
     list-style: none;
     font-size: var(--text-xs);
+    color: var(--color-ink-2);
   }
 
   li + li::before {
     content: '→';
-    margin-right: var(--space-2);
-    color: var(--color-border);
+    margin-right: var(--space-3xs);
+    color: var(--color-rule);
   }
 
   li a {
-    color: var(--color-text);
-    text-decoration-color: var(--color-border);
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
   }
   li a:hover {
-    text-decoration-color: currentColor;
+    color: var(--color-accent);
+    text-decoration: underline;
   }
 
   .pending span {
-    color: var(--color-text-muted);
-    opacity: 0.5;
+    opacity: 0.45;
+    white-space: nowrap;
   }
 </style>

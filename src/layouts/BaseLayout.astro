@@ -1,5 +1,9 @@
 ---
+/* Hallmark · genre: editorial · nav: N6 newspaper masthead · footer: Ft4 dense colophon
+ * design-system: design.md · designed-as-app
+ */
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
 import { profile } from '../lib/profile';
 
 interface Props {
@@ -11,6 +15,16 @@ const { title, description = profile.description } = Astro.props;
 
 const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+/* 마스트헤드 발행 라인은 실제 수치로 채웁니다 — 지어낸 지표를 쓰지 않습니다. */
+const published = await getCollection('assets', ({ data }) => !data.draft);
+const updated = published
+  .map((e) => e.data.updated.getTime())
+  .reduce((a, b) => Math.max(a, b), 0);
+const mastLine = `자산 ${published.length}건 · 갱신 ${new Intl.DateTimeFormat('ko-KR', {
+  year: 'numeric',
+  month: 'long',
+}).format(new Date(updated))}`;
 
 const nav = [
   { href: '/assets', label: '자산' },
@@ -38,46 +52,58 @@ const path = Astro.url.pathname;
     <meta property="og:locale" content="ko_KR" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    {/* Pretendard dynamic-subset: 한글을 ~300개 unicode-range 청크로 쪼개
-        실제 쓰인 음절 블록만 내려받습니다 (~1.3MB → ~30KB). */}
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {/* Pretendard dynamic-subset: 한글을 unicode-range 청크로 쪼개 실제 쓰인 음절만 받습니다. */}
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    {/* Noto Serif KR — display 전용. 600/700 두 웨이트만. */}
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&display=swap"
     />
   </head>
 
   <body>
     <a class="skip" href="#main">본문으로 건너뛰기</a>
 
-    <header class="site-header">
-      <div class="page header-inner">
-        <a href="/" class="wordmark">{profile.name}</a>
-        <nav aria-label="주요">
-          {
-            nav.map((item) => (
-              <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
-                {item.label}
-              </a>
-            ))
-          }
+    <header class="mast">
+      <div class="page">
+        <p class="mast-line nums">{mastLine}</p>
+        <a class="mast-name" href="/">{profile.name}</a>
+        <p class="mast-role">{profile.role}</p>
+        <nav class="mast-nav" aria-label="주요">
+          <ul>
+            {
+              nav.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
         </nav>
       </div>
+      <hr class="mast-rule" aria-hidden="true" />
     </header>
 
     <main id="main">
       <slot />
     </main>
 
-    <footer class="site-footer">
+    <footer class="colophon">
       <div class="page">
         <p>
-          <a href={`mailto:${profile.email}`}>{profile.email}</a>
-          <span aria-hidden="true"> · </span>
-          <a href={profile.github} rel="me">GitHub</a>
-        </p>
-        <p class="notice">
-          공개된 자산은 특정 조직·프로젝트와 무관하게 재작성한 일반 템플릿입니다.
+          {profile.name} · {profile.role} ·
+          <a href={`mailto:${profile.email}`}>{profile.email}</a> ·
+          <a href={profile.github} rel="me">github.com/namtank96</a> · Noto Serif KR 과 Pretendard 로
+          조판 · Astro 로 빌드 · 공개된 자산은 특정 조직·프로젝트와 무관하게 재작성한 일반 템플릿입니다 ·
+          <span class="nums">2026</span>
         </p>
       </div>
     </footer>
@@ -88,58 +114,99 @@ const path = Astro.url.pathname;
         left: -9999px;
       }
       .skip:focus {
-        left: var(--space-4);
-        top: var(--space-4);
+        left: var(--space-sm);
+        top: var(--space-sm);
         z-index: 10;
-        background: var(--color-bg);
-        padding: var(--space-2) var(--space-4);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
+        background: var(--color-paper);
+        padding: var(--space-2xs) var(--space-sm);
+        border: var(--rule-hair) solid var(--color-ink);
       }
 
-      .site-header {
-        border-bottom: 1px solid var(--color-border);
+      /* ── N6 신문 마스트헤드 ───────────────────────── */
+      .mast {
+        padding-top: var(--space-md);
       }
-      .header-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--space-6);
-        padding-block: var(--space-4);
+      .mast .page {
+        display: grid;
+        justify-items: center;
+        gap: var(--space-3xs);
+        text-align: center;
       }
-      .wordmark {
+
+      .mast-line {
+        font-size: var(--text-xs);
+        font-variant: small-caps;
+        letter-spacing: 0.1em;
+        color: var(--color-ink-2);
+      }
+
+      .mast-name {
         font-family: var(--font-display);
         font-weight: 700;
+        font-size: clamp(2rem, 6vw, 3.25rem);
+        line-height: 1;
+        letter-spacing: -0.03em;
         text-decoration: none;
-        letter-spacing: -0.02em;
-      }
-      nav {
-        display: flex;
-        gap: var(--space-6);
-        font-size: var(--text-sm);
-      }
-      nav a {
-        color: var(--color-text-muted);
-        text-decoration: none;
-      }
-      nav a:hover,
-      nav a[aria-current='page'] {
-        color: var(--color-text);
       }
 
-      .site-footer {
-        margin-top: var(--space-24);
-        border-top: 1px solid var(--color-border);
-        padding-block: var(--space-8);
-        font-size: var(--text-sm);
-        color: var(--color-text-muted);
+      .mast-role {
+        font-size: var(--text-xs);
+        color: var(--color-ink-2);
       }
-      .site-footer a {
+
+      .mast-nav ul {
+        display: flex;
+        gap: var(--space-md);
+        list-style: none;
+        padding: 0;
+        margin-top: var(--space-2xs);
+        font-size: var(--text-sm);
+      }
+      .mast-nav a {
+        display: inline-block;
+        padding: var(--space-3xs) var(--space-3xs);
+        color: var(--color-ink-2);
+        text-decoration: none;
+        white-space: nowrap; /* 클릭 대상은 두 줄로 접히지 않습니다 */
+      }
+      .mast-nav a:hover,
+      .mast-nav a[aria-current='page'] {
+        color: var(--color-accent);
+      }
+
+      /* 이중 괘선 — 브로드시트 어휘 */
+      .mast-rule {
+        border: 0;
+        border-top: var(--rule-hair) solid var(--color-ink);
+        border-bottom: var(--rule-hair) solid var(--color-rule);
+        height: 3px;
+        margin-top: var(--space-md);
+      }
+
+      /* ── Ft4 dense colophon ──────────────────────── */
+      .colophon {
+        margin-top: var(--space-3xl);
+        border-top: var(--rule-hair) solid var(--color-rule);
+        padding-block: var(--space-md) var(--space-xl);
+      }
+      .colophon p {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        line-height: 1.85;
+        color: var(--color-ink-2);
+        max-width: 74ch;
+      }
+      .colophon a {
         color: inherit;
       }
-      .notice {
-        margin-top: var(--space-2);
-        font-size: var(--text-xs);
+      .colophon a:hover {
+        color: var(--color-accent);
+      }
+
+      @media (max-width: 40rem) {
+        .colophon p {
+          font-size: 0.75rem;
+        }
       }
     </style>
   </body>

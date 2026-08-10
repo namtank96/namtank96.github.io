@@ -11,22 +11,27 @@
   margin: 0;
 }
 
+html,
+body {
+  /* clip 이지 hidden 이 아닙니다 — hidden 은 position:sticky 를 죽입니다. */
+  overflow-x: clip;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: var(--text-md);
   line-height: var(--leading-normal);
-  color: var(--color-text);
-  background: var(--color-bg);
+  color: var(--color-ink);
+  background: var(--color-paper);
   -webkit-font-smoothing: antialiased;
 
-  /* 한글은 복합명사 안에 줄바꿈 기회가 없어서, 기본값으로 두면
+  /* 한글 복합명사 안에는 줄바꿈 기회가 없어서, 기본값으로 두면
    * 영어라면 wrap 됐을 자리에서 overflow 가 납니다.
-   * keep-all = 어절 단위로 끊기 (break-all 아님 — 그건 음절을 쪼갭니다).
-   * anywhere 는 긴 URL 같은 예외 상황용 안전망입니다. */
+   * keep-all = 어절 단위로 끊기 (break-all 은 음절을 쪼개므로 아님). */
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
@@ -35,8 +40,9 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  line-height: var(--leading-tight);
+  font-style: normal; /* 이탤릭 헤더 금지 */
   font-weight: 700;
+  line-height: var(--leading-tight);
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
@@ -53,12 +59,13 @@ svg {
 
 a {
   color: inherit;
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: from-font;
 }
 
 ul,
 ol {
-  padding-inline-start: 1.2em;
+  padding-inline-start: 1.15em;
 }
 
 code,
@@ -66,20 +73,34 @@ pre {
   font-family: var(--font-mono);
 }
 
+/* 포커스 링은 즉시 나타납니다. 절대 전환하지 않습니다. */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
-/* ── 레이아웃 유틸 ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── 지면 유틸 ───────────────────────────────────── */
 .page {
   max-width: var(--page-max);
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: var(--page-gutter);
 }
 
 .prose {
   max-width: var(--measure);
+}
+
+.nums {
+  font-variant-numeric: tabular-nums;
 }
 
 .visually-hidden {

@@ -1,4 +1,7 @@
 ---
+/* Hallmark · genre: editorial · macrostructure: Long Document · theme: custom
+ * design-system: design.md · designed-as-app · enrichment: none · nav: N6 · footer: Ft4
+ */
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CopyBlock from '../../components/CopyBlock.astro';
@@ -26,66 +29,67 @@ const related = d.related
   .map((code) => all.find((e) => e.data.code === code))
   .filter((e): e is CollectionEntry<'assets'> => Boolean(e));
 
-const meta = [
-  KIND_LABEL[d.kind],
-  d.install,
-  `${payloadLineCount(d.payload)}줄`,
-  arcStep(d.code),
-  `${d.version} · ${formatDate(d.updated)}`,
-].filter(Boolean);
+const spec: [string, string][] = [
+  ['형식', KIND_LABEL[d.kind]],
+  ['붙이는 곳', d.install],
+  ['분량', `${payloadLineCount(d.payload)}줄`],
+  ['업무 단계', arcStep(d.code) ?? '—'],
+  ['버전', `${d.version} · ${formatDate(d.updated)}`],
+];
 ---
 
 <BaseLayout title={d.title} description={d.summary}>
-  <article class="page asset">
+  <article class="doc page">
     <header>
-      <p class="code">{d.code}</p>
+      <p class="code nums">{d.code}</p>
       <h1>{d.title}</h1>
-      <p class="summary">{d.summary}</p>
+      <p class="lede">{d.summary}</p>
 
-      <ul class="meta">
-        {meta.map((m) => <li>{m}</li>)}
-      </ul>
+      <dl class="spec nums">
+        {
+          spec.map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </header>
 
-    <section class="block">
+    <section class="prose">
       <h2>언제 쓰나</h2>
-      <ul class="prose">
+      <ul>
         {d.whenToUse.map((w) => <li>{w}</li>)}
       </ul>
-    </section>
 
-    <section class="block">
       <h2>안 쓰는 경우</h2>
-      <p class="prose">{d.whenNotToUse}</p>
-    </section>
+      <p>{d.whenNotToUse}</p>
 
-    <section class="block">
       <h2>입력</h2>
-      <p class="prose">{d.input}</p>
-    </section>
+      <p>{d.input}</p>
 
-    <section class="block">
       <h2>사용법</h2>
-      <ol class="prose">
+      <ol>
         {d.steps.map((s) => <li>{s}</li>)}
       </ol>
     </section>
 
-    <section class="block">
+    <section class="payload">
       <h2>본문</h2>
       <CopyBlock text={payload} />
     </section>
 
     {/* 출력 예시 + 이 규칙의 근거 — 본문 마크다운에서 옴 */}
-    <div class="block body prose">
+    <section class="prose body">
       <Content />
-    </div>
+    </section>
 
     {
       d.caveats.length > 0 && (
-        <section class="block">
+        <section class="prose">
           <h2>주의점·한계</h2>
-          <ul class="prose">
+          <ul>
             {d.caveats.map((c) => (
               <li>{c}</li>
             ))}
@@ -94,9 +98,9 @@ const meta = [
       )
     }
 
-    <section class="block">
+    <section class="prose">
       <h2>변경 이력</h2>
-      <ul class="prose changelog">
+      <ul class="changelog nums">
         {
           d.changelog.map((c) => (
             <li>
@@ -109,13 +113,15 @@ const meta = [
 
     {
       related.length > 0 && (
-        <nav class="block related" aria-label="관련 자산">
-          <h2>관련 자산</h2>
+        <nav class="related" aria-label="관련 자산">
+          <h2>업무 흐름에서 앞뒤에 오는 것</h2>
           <ul>
             {related.map((r) => (
               <li>
                 <a href={`/assets/${r.id}`}>
-                  <span class="rcode">{r.data.code}</span> {r.data.title}
+                  <span class="rcode nums">{r.data.code}</span>
+                  <span>{r.data.title}</span>
+                  <span class="rsum">{r.data.summary}</span>
                 </a>
               </li>
             ))}
@@ -127,86 +133,92 @@ const meta = [
 </BaseLayout>
 
 <style>
-  .asset {
-    padding-block: var(--space-16) var(--space-8);
+  .doc {
+    padding-block: var(--space-2xl) var(--space-lg);
   }
 
   header {
-    padding-bottom: var(--space-8);
-    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-lg);
+    border-bottom: var(--rule-hair) solid var(--color-ink);
   }
   .code {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
-    font-weight: 600;
     color: var(--color-accent);
   }
   h1 {
     font-size: var(--text-2xl);
-    margin-top: var(--space-2);
+    margin-top: var(--space-3xs);
+    max-width: 20ch;
   }
-  .summary {
-    margin-top: var(--space-3);
-    color: var(--color-text-muted);
+  .lede {
+    margin-top: var(--space-xs);
+    color: var(--color-ink-2);
     max-width: var(--measure);
   }
 
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-6);
-    padding: 0;
-    list-style: none;
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-  }
-  .meta li {
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    padding: 0 var(--space-3);
-  }
-
-  .block {
-    margin-top: var(--space-12);
-  }
-  .block h2 {
-    font-size: var(--text-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-4);
-  }
-
-  .block :global(li + li) {
-    margin-top: var(--space-2);
-  }
-
-  .changelog code {
+  /* 스펙 시트 — 배지 알약 대신 정렬된 표 */
+  .spec {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: var(--space-sm) var(--space-md);
+    margin: var(--space-lg) 0 0;
     font-size: var(--text-xs);
   }
+  .spec dt {
+    color: var(--color-ink-2);
+    margin-bottom: var(--space-3xs);
+  }
+  .spec dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
 
-  /* 본문 마크다운 */
-  .body :global(h2) {
+  /* Long Document — 섹션 제목이 본문 흐름에서 솟아오릅니다.
+   * 소형 대문자 eyebrow 를 쓰지 않습니다. */
+  section {
+    margin-top: var(--space-xl);
+  }
+  section :global(h2) {
+    font-family: var(--font-display);
     font-size: var(--text-xl);
-    text-transform: none;
+    font-weight: 600;
     letter-spacing: -0.02em;
-    color: var(--color-text);
-    margin-top: var(--space-12);
-    margin-bottom: var(--space-4);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xs);
   }
-  .body :global(p) {
-    margin-top: var(--space-4);
+  section > :global(h2:first-child) {
+    margin-top: 0;
   }
+  section :global(h2::after) {
+    content: '';
+    display: block;
+    width: 1.75rem;
+    height: 2px;
+    margin-top: var(--space-2xs);
+    background: var(--color-accent);
+  }
+
+  section :global(p) {
+    margin-top: var(--space-xs);
+  }
+  section :global(li + li) {
+    margin-top: var(--space-2xs);
+  }
+  section :global(ul),
+  section :global(ol) {
+    margin-top: var(--space-xs);
+  }
+
   .body :global(pre) {
-    margin-top: var(--space-4);
-    padding: var(--space-4);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--color-paper-2);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-card);
     overflow-x: auto;
     font-size: var(--text-xs);
-    line-height: 1.65;
+    line-height: 1.7;
   }
   .body :global(code) {
     font-size: 0.9em;
@@ -215,23 +227,67 @@ const meta = [
     font-weight: 700;
   }
 
+  .payload {
+    /* 이 섹션은 측정폭을 넘어섭니다 — 원문은 접히면 안 되므로 */
+    max-width: none;
+  }
+  .payload h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
+  .payload h2::after {
+    content: '';
+    display: block;
+    width: 1.75rem;
+    height: 2px;
+    margin-top: var(--space-2xs);
+    background: var(--color-accent);
+  }
+
+  .changelog code {
+    font-size: var(--text-xs);
+  }
+
+  .related {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-md);
+    border-top: var(--rule-hair) solid var(--color-ink);
+  }
+  .related h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
   .related ul {
-    padding: 0;
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  .related li {
+    border-bottom: var(--rule-hair) solid var(--color-rule);
   }
   .related a {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: var(--space-3xs) var(--space-sm);
+    padding-block: var(--space-xs);
     text-decoration: none;
   }
   .related a:hover {
-    text-decoration: underline;
+    color: var(--color-accent);
   }
   .rcode {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-accent);
-    margin-right: var(--space-2);
+  }
+  .rsum {
+    grid-column: 2;
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
   }
 </style>
