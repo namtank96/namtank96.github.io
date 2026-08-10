@@ -98,4 +98,51 @@ const experience = defineCollection({
   }),
 });
 
-export const collections = { assets, experience };
+/**
+ * 프로젝트 — 경력기술서가 못 담는 층.
+ *
+ * 경력기술서는 "무엇을 했다"와 KPI 를 담습니다. 그건 이미 문서에 있습니다.
+ * 이 컬렉션이 담는 것은 **무엇을 왜 그렇게 결정했는가**입니다.
+ * 채용 담당자가 다른 어디서도 얻을 수 없는 정보가 그것뿐이라서입니다.
+ *
+ * 식별 수준: 업종·규모까지만. 고객사명·사내 과제명·플랫폼명을 쓰지 않습니다.
+ * 필드 이름이 client 가 아니라 industry 인 것이 그 규율의 구조적 장치입니다.
+ */
+const projects = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/data/projects' }),
+  schema: z.object({
+    /** 일반화한 건명. 업종 + 무엇을 한 건인가. 고유명 금지 */
+    title: z.string(),
+    industry: z.enum(['finance', 'public', 'manufacturing', 'education', 'telco', 'internal', 'other']),
+    /** 규모 — 범위로 적습니다. 정확한 금액·인원 금지 */
+    scale: z.string().optional(),
+
+    start: z.coerce.date(),
+    end: z.coerce.date().optional(),
+
+    /** 어느 회사 소속으로 한 건인가 — experience 엔트리의 파일명 */
+    at: z.string(),
+    /** 이 건에서 내가 맡은 역할 */
+    role: z.string(),
+
+    /** 왜 이 일이 시작됐는가 — 문제 상황 */
+    situation: z.string(),
+    /** 내가 실제로 한 일 */
+    did: z.array(z.string()).min(1),
+    /**
+     * ★ 이 컬렉션의 존재 이유.
+     * 이 건에서 내린 판단과 그 근거. 되돌아봐서 틀린 판단도 적을 수 있습니다.
+     */
+    judgment: z.array(z.object({ call: z.string(), why: z.string() })).min(1),
+    /** 결과. 확인 가능한 것만. 없으면 비웁니다 — 지어내지 않습니다 */
+    result: z.string().optional(),
+
+    /** 이 건에서 나온 자산 code */
+    assetRefs: z.array(z.string()).default([]),
+
+    order: z.number().int().default(0),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { assets, experience, projects };

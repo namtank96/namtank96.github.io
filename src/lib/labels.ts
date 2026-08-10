@@ -9,6 +9,19 @@ export const KIND_LABEL = {
 
 export type Kind = keyof typeof KIND_LABEL;
 
+/** 업종 — 고객사명 대신 쓰는 식별 단위 */
+export const INDUSTRY_LABEL = {
+  finance: '금융',
+  public: '공공',
+  manufacturing: '제조',
+  education: '교육',
+  telco: '통신',
+  internal: '사내',
+  other: '기타',
+} as const;
+
+export type Industry = keyof typeof INDUSTRY_LABEL;
+
 /** 홈·자산 목록 상단에 그리는 업무 arc. code 순서가 곧 업무 흐름입니다. */
 export const ARC = [
   { code: 'A01', step: '운영 기반' },
