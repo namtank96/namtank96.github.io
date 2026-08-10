@@ -1,0 +1,237 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CopyBlock from '../../components/CopyBlock.astro';
+import { getPayload } from '../../lib/payloads';
+import { KIND_LABEL, arcStep, formatDate } from '../../lib/labels';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('assets', ({ data }) => !data.draft);
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'assets'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const payload = getPayload(d.payload);
+
+const all = (await getCollection('assets', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const related = d.related
+  .map((code) => all.find((e) => e.data.code === code))
+  .filter((e): e is CollectionEntry<'assets'> => Boolean(e));
+
+const meta = [
+  KIND_LABEL[d.kind],
+  d.install,
+  `${d.lines}줄`,
+  arcStep(d.code),
+  `${d.version} · ${formatDate(d.updated)}`,
+].filter(Boolean);
+---
+
+<BaseLayout title={d.title} description={d.summary}>
+  <article class="page asset">
+    <header>
+      <p class="code">{d.code}</p>
+      <h1>{d.title}</h1>
+      <p class="summary">{d.summary}</p>
+
+      <ul class="meta">
+        {meta.map((m) => <li>{m}</li>)}
+      </ul>
+    </header>
+
+    <section class="block">
+      <h2>언제 쓰나</h2>
+      <ul class="prose">
+        {d.whenToUse.map((w) => <li>{w}</li>)}
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>안 쓰는 경우</h2>
+      <p class="prose">{d.whenNotToUse}</p>
+    </section>
+
+    <section class="block">
+      <h2>입력</h2>
+      <p class="prose">{d.input}</p>
+    </section>
+
+    <section class="block">
+      <h2>사용법</h2>
+      <ol class="prose">
+        {d.steps.map((s) => <li>{s}</li>)}
+      </ol>
+    </section>
+
+    <section class="block">
+      <h2>본문</h2>
+      <CopyBlock text={payload} />
+    </section>
+
+    {/* 출력 예시 + 이 규칙의 근거 — 본문 마크다운에서 옴 */}
+    <div class="block body prose">
+      <Content />
+    </div>
+
+    {
+      d.caveats.length > 0 && (
+        <section class="block">
+          <h2>주의점·한계</h2>
+          <ul class="prose">
+            {d.caveats.map((c) => (
+              <li>{c}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="block">
+      <h2>변경 이력</h2>
+      <ul class="prose changelog">
+        {
+          d.changelog.map((c) => (
+            <li>
+              <code>{c.version}</code> · {formatDate(c.date)} · {c.note}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {
+      related.length > 0 && (
+        <nav class="block related" aria-label="관련 자산">
+          <h2>관련 자산</h2>
+          <ul>
+            {related.map((r) => (
+              <li>
+                <a href={`/assets/${r.id}`}>
+                  <span class="rcode">{r.data.code}</span> {r.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .asset {
+    padding-block: var(--space-16) var(--space-8);
+  }
+
+  header {
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+  h1 {
+    font-size: var(--text-2xl);
+    margin-top: var(--space-2);
+  }
+  .summary {
+    margin-top: var(--space-3);
+    color: var(--color-text-muted);
+    max-width: var(--measure);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+  .meta li {
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0 var(--space-3);
+  }
+
+  .block {
+    margin-top: var(--space-12);
+  }
+  .block h2 {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .block :global(li + li) {
+    margin-top: var(--space-2);
+  }
+
+  .changelog code {
+    font-size: var(--text-xs);
+  }
+
+  /* 본문 마크다운 */
+  .body :global(h2) {
+    font-size: var(--text-xl);
+    text-transform: none;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-4);
+  }
+  .body :global(p) {
+    margin-top: var(--space-4);
+  }
+  .body :global(pre) {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    font-size: var(--text-xs);
+    line-height: 1.65;
+  }
+  .body :global(code) {
+    font-size: 0.9em;
+  }
+  .body :global(strong) {
+    font-weight: 700;
+  }
+
+  .related ul {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .related a {
+    text-decoration: none;
+  }
+  .related a:hover {
+    text-decoration: underline;
+  }
+  .rcode {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    margin-right: var(--space-2);
+  }
+</style>

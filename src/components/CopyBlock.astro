@@ -1,0 +1,141 @@
+---
+/**
+ * 복사 블록 — 자산 페이지의 실질 CTA.
+ *
+ * 왜 마크다운으로 렌더링하지 않는가:
+ * 자산 상당수가 마크다운 문법 자체를 내용으로 담습니다(운영 규칙의 헤딩,
+ * 서브에이전트 정의의 YAML frontmatter, 갭표의 마크다운 표).
+ * 렌더링하면 정작 복사해 갈 원문이 사라집니다. 그래서 페이로드는
+ * src/payloads/ 에 따로 두고 ?raw 로 읽어 <pre> 로만 보여줍니다.
+ *
+ * 왜 <template> 을 따로 두는가:
+ * <pre> 와 <textarea> 는 시작 태그 직후의 개행 1개를 HTML 파서가 먹어버립니다.
+ * 거기서 복사하면 페이로드 첫 줄이 조용히 잘릴 수 있습니다.
+ * <template> 에는 그 quirk 가 없어서 원문이 바이트 그대로 보존됩니다.
+ *
+ * 이스케이프: Astro 의 {expression} 은 기본적으로 HTML 이스케이프하므로
+ * 페이로드에 </script> 같은 문자열이 들어 있어도 안전합니다.
+ * set:html 은 이스케이프하지 않으니 절대 쓰지 마세요.
+ */
+interface Props {
+  text: string;
+  label?: string;
+}
+
+const { text, label = '전체 복사' } = Astro.props;
+const lineCount = text.split('\n').length;
+---
+
+<div class="copy-block" data-copy-block>
+  <div class="bar">
+    <span class="meta">{lineCount}줄</span>
+    <button type="button" data-copy-trigger data-label={label}>{label}</button>
+  </div>
+
+  <pre><code>{text}</code></pre>
+
+  <template data-copy-source>{text}</template>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-copy-block]').forEach((block) => {
+    const button = block.querySelector<HTMLButtonElement>('[data-copy-trigger]');
+    const source = block.querySelector<HTMLTemplateElement>('[data-copy-source]');
+    if (!button || !source) return;
+
+    const original = button.dataset.label ?? button.textContent ?? '전체 복사';
+    let timer: number | undefined;
+
+    const flash = (message: string) => {
+      // 빠른 연타 시 라벨이 되돌아오지 않고 멈추는 걸 막습니다.
+      if (timer) window.clearTimeout(timer);
+      button.textContent = message;
+      timer = window.setTimeout(() => {
+        button.textContent = original;
+        timer = undefined;
+      }, 2000);
+    };
+
+    button.addEventListener('click', async () => {
+      const raw = source.content.textContent ?? '';
+
+      // navigator.clipboard 는 secure context 전용입니다.
+      // https 와 localhost 는 되지만, `astro dev --host` 로 폰에서
+      // http://192.168.x.x:4321 로 접속하면 undefined 라서 throw 합니다.
+      if (!navigator.clipboard) {
+        const pre = block.querySelector('pre');
+        if (pre) {
+          const range = document.createRange();
+          range.selectNodeContents(pre);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+        flash('직접 복사하세요 (Ctrl+C)');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(raw);
+        flash('복사됨 ✓');
+      } catch {
+        flash('복사 실패');
+      }
+    });
+  });
+</script>
+
+<style>
+  .copy-block {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .meta {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  button {
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-text);
+    border-radius: var(--radius);
+    background: var(--color-text);
+    color: var(--color-bg);
+    cursor: pointer;
+    min-width: 8rem;
+  }
+  button:hover {
+    opacity: 0.85;
+  }
+
+  pre {
+    margin: 0;
+    padding: var(--space-4);
+    overflow-x: auto;
+    font-size: var(--text-xs);
+    line-height: 1.65;
+    max-height: 32rem;
+    overflow-y: auto;
+    /* 코드 블록은 어절 단위로 끊으면 안 됩니다 — 원문 그대로 보여야 하므로 */
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: pre;
+    tab-size: 2;
+  }
+</style>

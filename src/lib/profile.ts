@@ -26,7 +26,7 @@ export const profile = {
   /** 히어로 하단 증거 한 줄 — 검증 가능한 수치만 */
   proof: ['스펙 문서 100+', '커스텀 서브에이전트 7종', '운영 규칙 리포 3개'],
 
-  email: 'ktds.axbd@gmail.com',
+  email: 'ktds.axbd@gmail.com', // sanitize-ok: 본인이 공개하는 연락처
   github: 'https://github.com/namtank96',
   siteUrl: 'https://namtank96.github.io',
 

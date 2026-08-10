@@ -7,8 +7,11 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node scripts/sanitize-check.mjs",
     "build": "astro build",
     "preview": "astro preview",
+    "sanitize": "node scripts/sanitize-check.mjs",
+    "check": "astro check",
     "astro": "astro"
   },
   "dependencies": {

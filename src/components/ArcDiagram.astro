@@ -1,0 +1,57 @@
+---
+/**
+ * 업무 arc — 자산 목록이 "잡동사니 N개"가 아니라 하나의 작업 체계로
+ * 읽히게 하는 장치. code 순서가 곧 사업개발 업무 흐름입니다.
+ * 아직 공개되지 않은(draft) 자산은 링크 없이 흐리게 표시합니다.
+ */
+import { getCollection } from 'astro:content';
+import { ARC } from '../lib/labels';
+
+const published = await getCollection('assets', ({ data }) => !data.draft);
+const idByCode = new Map(published.map((e) => [e.data.code, e.id]));
+---
+
+<ol class="arc" aria-label="사업개발 업무 흐름">
+  {
+    ARC.map(({ code, step }) => {
+      const id = idByCode.get(code);
+      return (
+        <li class={id ? 'live' : 'pending'}>
+          {id ? <a href={`/assets/${id}`}>{step}</a> : <span>{step}</span>}
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .arc {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-xs);
+  }
+
+  li + li::before {
+    content: '→';
+    margin-right: var(--space-2);
+    color: var(--color-border);
+  }
+
+  li a {
+    color: var(--color-text);
+    text-decoration-color: var(--color-border);
+  }
+  li a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .pending span {
+    color: var(--color-text-muted);
+    opacity: 0.5;
+  }
+</style>

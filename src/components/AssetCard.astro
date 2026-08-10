@@ -1,0 +1,82 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { KIND_LABEL, arcStep } from '../lib/labels';
+
+interface Props {
+  entry: CollectionEntry<'assets'>;
+}
+
+const { entry } = Astro.props;
+const { code, title, summary, kind, lines } = entry.data;
+const step = arcStep(code);
+---
+
+<a class="card" href={`/assets/${entry.id}`}>
+  <div class="top">
+    <span class="code">{code}</span>
+    {step && <span class="step">{step}</span>}
+  </div>
+
+  <h3>{title}</h3>
+  <p class="summary">{summary}</p>
+
+  <div class="badges">
+    <span>{KIND_LABEL[kind]}</span>
+    <span>{lines}줄</span>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    background: var(--color-bg);
+    transition: border-color 0.12s ease;
+  }
+  .card:hover {
+    border-color: var(--color-text);
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-xs);
+  }
+  .code {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+  .step {
+    color: var(--color-text-muted);
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+  }
+
+  .summary {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    flex: 1;
+  }
+
+  .badges {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+  .badges span {
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0 var(--space-3);
+  }
+</style>
