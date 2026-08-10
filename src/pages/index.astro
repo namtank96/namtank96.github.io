@@ -6,11 +6,18 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AssetRow from '../components/AssetRow.astro';
 import ArcDiagram from '../components/ArcDiagram.astro';
-import { profile } from '../lib/profile';
+import { profile, WEAPONS } from '../lib/profile';
 
 const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const experience = (await getCollection('experience', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.order - a.data.order,
+);
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+
+const f = (d: Date) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+const oldest = experience[experience.length - 1];
 ---
 
 <BaseLayout>
@@ -19,41 +26,63 @@ const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
     <div class="intro prose">
       {profile.intro.map((line) => <p>{line}</p>)}
     </div>
+  </section>
 
-    <p class="proof nums">{profile.proof.join(' · ')}</p>
+  {/* 궤적 — 도메인이 끊기지 않았다는 것이 한눈에 보여야 합니다 */}
+  <section class="track page">
+    <h2>궤적</h2>
+    <ol class="rail">
+      {
+        experience.map((e) => (
+          <li>
+            <span class="when nums">
+              {f(e.data.start)} – {e.data.end ? f(e.data.end) : '현재'}
+            </span>
+            <span class="who">{e.data.company}</span>
+            <span class="what">{e.data.role}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="track-note">
+      {oldest && `${oldest.data.start.getFullYear()}년부터`} 회사와 역할은 바뀌었지만 도메인은
+      바뀌지 않았습니다. <a href="/about">프로젝트 {projects.length}건으로 자세히 →</a>
+    </p>
+  </section>
+
+  <section class="weapons page">
+    <h2>무기</h2>
+    <ul>
+      {
+        WEAPONS.map((w) => (
+          <li>
+            <strong>{w.title}</strong>
+            <span class="ev nums">{w.evidence}</span>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <section class="index page">
-    {/* 라벨과 제목을 같은 행에 두지 않습니다 — 수직 스택만. */}
     <div class="index-head">
-      <h2>자산 {assets.length}건 · 업무 흐름 순</h2>
+      <h2>공개한 자산 {assets.length}건 · 업무 흐름 순</h2>
       <ArcDiagram />
     </div>
-
     <ol class="rows">
       {assets.map((entry) => <AssetRow entry={entry} />)}
     </ol>
   </section>
-
-  <section class="tail page">
-    <p class="prose">
-      이 자산들은 취미가 아니라 <a href="/about">사업개발·사업관리 업무</a>에서 나왔습니다.
-      어느 업무에서 무엇이 나왔는지도 적어 두었습니다.
-    </p>
-  </section>
 </BaseLayout>
 
 <style>
-  /* 섹션마다 패딩을 달리 줍니다 — 균일한 패딩은 템플릿 신호입니다. */
   .lede {
     padding-block: var(--space-2xl) var(--space-xl);
   }
-
   h1 {
     font-size: var(--text-display-s);
-    max-width: 16ch;
+    max-width: 18ch;
   }
-
   .intro {
     margin-top: var(--space-md);
     color: var(--color-ink-2);
@@ -62,19 +91,86 @@ const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
     margin-top: var(--space-2xs);
   }
 
-  .index {
-    padding-block: 0 var(--space-lg);
+  section > h2 {
+    font-size: var(--text-md);
+    font-weight: 600;
+    letter-spacing: 0;
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--rule-hair) solid var(--color-ink);
+    margin-bottom: var(--space-sm);
   }
 
-  .proof {
-    margin-top: var(--space-md);
-    padding-top: var(--space-2xs);
-    border-top: var(--rule-hair) solid var(--color-rule);
+  /* 궤적 */
+  .track {
+    padding-block: 0 var(--space-xl);
+  }
+  .rail {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .rail li {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--space-3xs) var(--space-sm);
+    padding-block: var(--space-2xs);
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+  }
+  .when {
+    font-size: var(--text-xs);
+    color: var(--color-ink-2);
+    white-space: nowrap;
+  }
+  .who {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .what {
+    grid-column: 2;
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+  .track-note {
+    margin-top: var(--space-sm);
     max-width: var(--measure);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+  .track-note a {
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  /* 무기 */
+  .weapons {
+    padding-block: 0 var(--space-xl);
+  }
+  .weapons ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+  .weapons li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-sm);
+  }
+  .weapons strong {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .ev {
     font-size: var(--text-xs);
     color: var(--color-ink-2);
   }
 
+  .index {
+    padding-block: 0 var(--space-lg);
+  }
   .index-head {
     display: flex;
     flex-direction: column;
@@ -82,25 +178,22 @@ const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
     margin-bottom: var(--space-sm);
   }
   .index-head h2 {
-    font-size: var(--text-md);
-    font-weight: 600;
-    letter-spacing: 0;
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
   }
-
   .rows {
     list-style: none;
     padding: 0;
     margin: 0;
   }
 
-  .tail {
-    padding-block: var(--space-xl) 0;
-  }
-  .tail p {
-    color: var(--color-ink-2);
-    font-size: var(--text-sm);
-  }
-  .tail a {
-    color: var(--color-accent);
+  @media (max-width: 40rem) {
+    .rail li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .what {
+      grid-column: 1;
+    }
   }
 </style>

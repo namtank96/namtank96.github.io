@@ -24,6 +24,13 @@ const assets = defineCollection({
 
     /** 형식 배지 */
     kind: z.enum(['rules', 'prompt', 'subagent', 'template']),
+    /**
+     * 묶음. 자산이 8건을 넘어가면서 업무 흐름 arc 하나로는 안 담깁니다.
+     * flow  — 사업개발 업무 흐름 위의 자산 (arc 로 배열)
+     * ops   — 기획 리포를 운영하는 자산
+     * build — 산출물을 만들 때 쓰는 자산
+     */
+    group: z.enum(['flow', 'ops', 'build']).default('flow'),
     /** 붙이는 곳: '프로젝트 루트 CLAUDE.md' 등 */
     install: z.string(),
 
@@ -132,8 +139,11 @@ const projects = defineCollection({
     /**
      * ★ 이 컬렉션의 존재 이유.
      * 이 건에서 내린 판단과 그 근거. 되돌아봐서 틀린 판단도 적을 수 있습니다.
+     *
+     * 선택 항목인 이유: 본인만 아는 내용이라 대신 채울 수 없습니다.
+     * 비어 있으면 그 절이 렌더되지 않을 뿐, 지어내서 채우지 않습니다.
      */
-    judgment: z.array(z.object({ call: z.string(), why: z.string() })).min(1),
+    judgment: z.array(z.object({ call: z.string(), why: z.string() })).default([]),
     /** 결과. 확인 가능한 것만. 없으면 비웁니다 — 지어내지 않습니다 */
     result: z.string().optional(),
 

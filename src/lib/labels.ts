@@ -29,6 +29,7 @@ export const ARC = [
   { code: 'A02', step: '고객 진단' },
   { code: 'A05', step: '경쟁 대조' },
   { code: 'A07', step: '사업성 검증' },
+  { code: 'A11', step: '보고 준비' },
   { code: 'A08', step: '회의 처리' },
   { code: 'A03', step: '품질 감사' },
   { code: 'A04', step: '세션 인계' },
@@ -37,6 +38,22 @@ export const ARC = [
 export function arcStep(code: string): string | undefined {
   return ARC.find((a) => a.code === code)?.step;
 }
+
+/** 묶음 라벨. 자산이 arc 하나에 다 안 들어가서 나눴습니다. */
+export const GROUP_LABEL = {
+  flow: '사업개발 업무 흐름',
+  ops: '기획 리포 운영',
+  build: '산출물 제작',
+} as const;
+
+export const GROUP_NOTE = {
+  flow: '발굴에서 인계까지, 한 건이 도는 순서대로.',
+  ops: '리포가 무거워지고 문서가 엉키기 시작할 때.',
+  build: '덱·데모·프로토타입을 실제로 만들 때.',
+} as const;
+
+export type Group = keyof typeof GROUP_LABEL;
+export const GROUP_ORDER: Group[] = ['flow', 'ops', 'build'];
 
 /** 2026. 8. 10. 형태 */
 export function formatDate(d: Date): string {
