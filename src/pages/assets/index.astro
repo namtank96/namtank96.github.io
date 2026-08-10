@@ -5,15 +5,21 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AssetCard from '../../components/AssetCard.astro';
+import ArcDiagram from '../../components/ArcDiagram.astro';
 import { profile } from '../../lib/profile';
-import { arcStep } from '../../lib/labels';
+import { GROUP_LABEL, GROUP_NOTE, GROUP_ORDER, type Group } from '../../lib/labels';
 
 const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order,
 );
 
-/* Catalogue 의 카테고리 라벨 밴드 — arc 단계별로 묶습니다. */
-const groups = assets.map((entry) => ({ entry, step: arcStep(entry.data.code) ?? '기타' }));
+/* 자산이 8건을 넘으면서 arc 하나로는 안 담깁니다. 세 묶음으로 나눕니다. */
+const grouped = GROUP_ORDER.map((g: Group) => ({
+  key: g,
+  label: GROUP_LABEL[g],
+  note: GROUP_NOTE[g],
+  items: assets.filter((a) => a.data.group === g),
+})).filter((g) => g.items.length > 0);
 ---
 
 <BaseLayout
@@ -26,21 +32,28 @@ const groups = assets.map((entry) => ({ entry, step: arcStep(entry.data.code) ??
       제안·진단·검토를 사람의 컨디션이 아니라 규격이 보증하게 만들려고 쓴 것들입니다.
       전부 실무에서 쓰다가 일반화했고, 붙여넣기만 하면 바로 돕니다.
     </p>
-    <p class="count nums">전 {assets.length}건 · 업무 흐름 순</p>
+    <p class="count nums">전 {assets.length}건 · 묶음 {grouped.length}개</p>
   </section>
 
-  <section class="grid-wrap page">
-    <div class="grid">
-      {
-        groups.map(({ entry, step }) => (
-          <div class="cell">
-            <p class="band">{step}</p>
+  {
+    grouped.map((g) => (
+      <section class="group page">
+        <div class="group-head">
+          <h2>
+            {g.label} <span class="n nums">{g.items.length}</span>
+          </h2>
+          <p class="note">{g.note}</p>
+          {g.key === 'flow' && <ArcDiagram />}
+        </div>
+
+        <div class="grid">
+          {g.items.map((entry) => (
             <AssetCard entry={entry} />
-          </div>
-        ))
-      }
-    </div>
-  </section>
+          ))}
+        </div>
+      </section>
+    ))
+  }
 </BaseLayout>
 
 <style>
@@ -63,28 +76,39 @@ const groups = assets.map((entry) => ({ entry, step: arcStep(entry.data.code) ??
     letter-spacing: 0.08em;
   }
 
-  .grid-wrap {
-    padding-bottom: var(--space-lg);
+  .group {
+    padding-block: 0 var(--space-xl);
   }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
-    gap: var(--space-lg) var(--space-md);
-  }
-
-  .cell {
+  /* 라벨과 제목을 같은 행에 두지 않습니다 — 수직 스택만. */
+  .group-head {
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
-    min-width: 0;
+    padding-bottom: var(--space-2xs);
+    border-bottom: 2px solid var(--color-ink);
+    margin-bottom: var(--space-md);
   }
-  .band {
-    font-size: var(--text-xs);
+  .group-head h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .n {
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-accent);
+    vertical-align: super;
+  }
+  .note {
+    font-size: var(--text-sm);
     color: var(--color-ink-2);
-    padding-bottom: var(--space-3xs);
-    border-bottom: var(--rule-hair) solid var(--color-ink);
+    max-width: var(--measure);
   }
-  .cell > :global(.card) {
-    flex: 1;
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-md);
   }
 </style>

@@ -7,7 +7,11 @@
 import { getCollection } from 'astro:content';
 import { ARC } from '../lib/labels';
 
-const published = await getCollection('assets', ({ data }) => !data.draft);
+/* arc 는 flow 묶음만 그립니다. ops·build 자산은 업무 흐름 위에 있지 않습니다. */
+const published = await getCollection(
+  'assets',
+  ({ data }) => !data.draft && data.group === 'flow',
+);
 const idByCode = new Map(published.map((e) => [e.data.code, e.id]));
 ---
 
