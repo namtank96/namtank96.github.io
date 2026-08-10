@@ -1,0 +1,53 @@
+/*
+ * 디자인 토큰 — Phase 5(hallmark 디자인 패스)에서 교체될 플레이스홀더입니다.
+ *
+ * 규칙: 컴포넌트는 절대 raw 색상값을 쓰지 않고 var(--color-*) 로만 소비합니다.
+ * 그래야 Phase 5에서 이 파일 하나만 갈아끼우면 사이트 전체가 바뀝니다.
+ */
+:root {
+  /* ── 색 ─────────────────────────────────────────── */
+  --color-bg: oklch(99% 0.004 95);
+  --color-surface: oklch(97% 0.006 95);
+  --color-border: oklch(89% 0.008 95);
+  --color-text: oklch(24% 0.012 260);
+  --color-text-muted: oklch(52% 0.012 260);
+  --color-accent: oklch(52% 0.16 255);
+  --color-accent-soft: oklch(95% 0.03 255);
+
+  /* ── 타이포 ──────────────────────────────────────
+   * 라틴 서체를 1순위, 한글 서체를 2순위에 둡니다.
+   * 브라우저는 글리프 단위로 폴백하므로 라틴은 앞 서체가,
+   * 한글은 Pretendard 가 담당합니다.
+   * Phase 5에서 앞자리 라틴 서체만 교체하면 됩니다.
+   */
+  --font-body: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+  --font-display: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'D2Coding', 'Consolas', monospace;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.7;
+
+  /* ── 간격 ────────────────────────────────────────── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* ── 기타 ────────────────────────────────────────── */
+  --radius: 6px;
+  --measure: 68ch;
+  --page-max: 940px;
+}

@@ -1,0 +1,146 @@
+---
+import '../styles/global.css';
+import { profile } from '../lib/profile';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = profile.description } = Astro.props;
+
+const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const nav = [
+  { href: '/assets', label: '자산' },
+  { href: '/about', label: '경험' },
+];
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {/* Pretendard dynamic-subset: 한글을 ~300개 unicode-range 청크로 쪼개
+        실제 쓰인 음절 블록만 내려받습니다 (~1.3MB → ~30KB). */}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+  </head>
+
+  <body>
+    <a class="skip" href="#main">본문으로 건너뛰기</a>
+
+    <header class="site-header">
+      <div class="page header-inner">
+        <a href="/" class="wordmark">{profile.name}</a>
+        <nav aria-label="주요">
+          {
+            nav.map((item) => (
+              <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="page">
+        <p>
+          <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          <span aria-hidden="true"> · </span>
+          <a href={profile.github} rel="me">GitHub</a>
+        </p>
+        <p class="notice">
+          공개된 자산은 특정 조직·프로젝트와 무관하게 재작성한 일반 템플릿입니다.
+        </p>
+      </div>
+    </footer>
+
+    <style>
+      .skip {
+        position: absolute;
+        left: -9999px;
+      }
+      .skip:focus {
+        left: var(--space-4);
+        top: var(--space-4);
+        z-index: 10;
+        background: var(--color-bg);
+        padding: var(--space-2) var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+      }
+
+      .site-header {
+        border-bottom: 1px solid var(--color-border);
+      }
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-6);
+        padding-block: var(--space-4);
+      }
+      .wordmark {
+        font-family: var(--font-display);
+        font-weight: 700;
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+      nav {
+        display: flex;
+        gap: var(--space-6);
+        font-size: var(--text-sm);
+      }
+      nav a {
+        color: var(--color-text-muted);
+        text-decoration: none;
+      }
+      nav a:hover,
+      nav a[aria-current='page'] {
+        color: var(--color-text);
+      }
+
+      .site-footer {
+        margin-top: var(--space-24);
+        border-top: 1px solid var(--color-border);
+        padding-block: var(--space-8);
+        font-size: var(--text-sm);
+        color: var(--color-text-muted);
+      }
+      .site-footer a {
+        color: inherit;
+      }
+      .notice {
+        margin-top: var(--space-2);
+        font-size: var(--text-xs);
+      }
+    </style>
+  </body>
+</html>

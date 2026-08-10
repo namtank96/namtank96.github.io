@@ -1,0 +1,44 @@
+name: Deploy to GitHub Pages
+
+on:
+  # 로컬 git 의 init.defaultBranch 가 master 라서, 여기 브랜치명과 어긋나면
+  # push 해도 워크플로가 조용히 안 돌고 에러 메시지도 안 뜹니다.
+  # 이 repo 는 `git init -b main` 으로 만들었습니다.
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 배포는 취소하지 않고 큐잉합니다 (진행 중 배포를 죽이면 사이트가 깨질 수 있음).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # 이 액션이 npm 설치 → `npm run build` → Pages 아티팩트 업로드까지 합니다.
+      # package.json 의 prebuild(살균 게이트)도 자동으로 함께 돕니다.
+      - name: Build Astro site
+        uses: withastro/action@v6
+        with:
+          node-version: '24'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
