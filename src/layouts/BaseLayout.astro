@@ -53,7 +53,10 @@ const path = Astro.url.pathname;
     <meta property="og:image" content={new URL('/og.png', Astro.site).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="AI에게 시키기 전에, 규격부터 씁니다. — 남윤서 포트폴리오" />
+    <meta
+      property="og:image:alt"
+      content={`${profile.headline} ${profile.name} 포트폴리오`}
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL('/og.png', Astro.site).href} />
 
@@ -107,7 +110,7 @@ const path = Astro.url.pathname;
           {profile.name} · {profile.role} ·
           <a href={`mailto:${profile.email}`}>{profile.email}</a> ·
           <a href={profile.github} rel="me">github.com/namtank96</a> · Noto Serif KR 과 Pretendard 로
-          조판 · Astro 로 빌드 · 공개된 자산은 특정 조직·프로젝트와 무관하게 재작성한 일반 템플릿입니다 ·
+          조판 · Astro 로 빌드 · 공개한 자산은 특정 조직·프로젝트와 무관하게 다시 쓴 일반 템플릿입니다 ·
           <span class="nums">2026</span>
         </p>
       </div>

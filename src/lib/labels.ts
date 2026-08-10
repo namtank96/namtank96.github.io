@@ -48,8 +48,8 @@ export const GROUP_LABEL = {
 
 export const GROUP_NOTE = {
   flow: '발굴에서 인계까지, 한 건이 도는 순서대로.',
-  ops: '리포가 무거워지고 문서가 엉키기 시작할 때.',
-  build: '덱·데모·프로토타입을 실제로 만들 때.',
+  ops: '문서가 늘어나면서 뭐가 최신인지 모르겠을 때.',
+  build: '덱과 데모를 실제로 만들 때.',
 } as const;
 
 export type Group = keyof typeof GROUP_LABEL;

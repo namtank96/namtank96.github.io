@@ -53,7 +53,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
 
     <section class="weapons-section">
       <h2>무기</h2>
-      <p class="sec-lede">남들과 확실히 갈리는 지점만 적었습니다. 각각에 근거를 답니다.</p>
+      <p class="sec-lede">네 가지만 적었습니다. 각각 확인 가능한 근거를 붙였습니다.</p>
       <ol class="weapons">
         {
           WEAPONS.map((w) => (
@@ -69,7 +69,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
 
     <section class="career-section">
       <h2>어디서 무슨 일을 했나</h2>
-      <p class="sec-lede">{span} 지금까지, 회사와 역할은 바뀌었지만 도메인은 바뀌지 않았습니다.</p>
+      <p class="sec-lede">{span} 세 회사. 맡은 일은 콘텐츠 기획에서 사업개발까지 옮겨왔습니다.</p>
 
       {
         byCompany.map(({ exp, projects: ps }) => (
