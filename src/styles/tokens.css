@@ -31,14 +31,21 @@
   --font-body: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
   --font-mono: ui-monospace, 'D2Coding', Consolas, monospace;
 
-  --text-xs: 0.8125rem;
-  --text-sm: 0.9375rem;
-  --text-md: 1.0625rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.625rem;
-  --text-2xl: 2.125rem;
-  --text-display-s: clamp(2rem, 4vw, 2.75rem);
-  --text-display: clamp(2.5rem, 6vw, 4rem);
+  /* 한글 기준 타입 스케일.
+   * 크기는 KRDS(대한민국 정부 디지털 서비스 디자인 시스템)가 한글로 검증한
+   * 값에 맞췄습니다 — 본문 17px, 헤딩 19 / 24 / 32 / 40.
+   * 라틴 기준 모듈러 스케일을 그대로 쓰면 한글에서 작은 단계가 뭉개집니다.
+   *
+   * 작은 쪽(13~17)은 KRDS 처럼 고정하고 큰 쪽만 clamp 로 줄입니다.
+   * 전부 유동시키면 작은 텍스트까지 흔들려 위계가 더 흐려집니다. */
+  --text-xs: 0.8125rem; /* 13 — 메타·배지 전용 */
+  --text-sm: 0.9375rem; /* 15 */
+  --text-md: 1.0625rem; /* 17 — 본문 */
+  --text-lg: 1.1875rem; /* 19 */
+  --text-xl: 1.5rem; /*    24 — 섹션 제목 */
+  --text-2xl: 2rem; /*      32 — 페이지 제목 */
+  --text-display-s: clamp(2rem, 4.5vw, 2.5rem); /* 32 → 40 */
+  --text-display: clamp(2.25rem, 6vw, 3.25rem); /* 36 → 52 — 홈 헤드라인 전용 */
 
   --leading-tight: 1.2;
   --leading-normal: 1.72;

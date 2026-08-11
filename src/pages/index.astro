@@ -7,10 +7,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AssetRow from '../components/AssetRow.astro';
 import ArcDiagram from '../components/ArcDiagram.astro';
 import { profile, WEAPONS } from '../lib/profile';
+import { GROUP_LABEL, GROUP_NOTE, GROUP_ORDER, type Group } from '../lib/labels';
 
 const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order,
 );
+
+/* 15행을 한 덩어리로 두면 스크롤이 단조로워집니다. 묶음으로 끊습니다. */
+const grouped = GROUP_ORDER.map((g: Group) => ({
+  key: g,
+  label: GROUP_LABEL[g],
+  note: GROUP_NOTE[g],
+  items: assets.filter((a) => a.data.group === g),
+})).filter((g) => g.items.length > 0);
 const experience = (await getCollection('experience', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.order - a.data.order,
 );
@@ -66,12 +75,26 @@ const oldest = experience[experience.length - 1];
 
   <section class="index page">
     <div class="index-head">
-      <h2>공개한 자산 {assets.length}건 · 업무 흐름 순</h2>
+      <h2>공개한 자산 {assets.length}건</h2>
       <ArcDiagram />
     </div>
-    <ol class="rows">
-      {assets.map((entry) => <AssetRow entry={entry} />)}
-    </ol>
+
+    {
+      grouped.map((g) => (
+        <div class="group">
+          <p class="group-head">
+            <span class="group-label">{g.label}</span>
+            <span class="group-note">{g.note}</span>
+            <span class="group-n nums">{g.items.length}</span>
+          </p>
+          <ol class="rows">
+            {g.items.map((entry) => (
+              <AssetRow entry={entry} />
+            ))}
+          </ol>
+        </div>
+      ))
+    }
   </section>
 </BaseLayout>
 
@@ -79,9 +102,11 @@ const oldest = experience[experience.length - 1];
   .lede {
     padding-block: var(--space-2xl) var(--space-xl);
   }
+  /* 홈 헤드라인만 display 를 씁니다. 다른 페이지는 display-s 라
+   * 첫 화면이 확실히 한 단계 위에 있게 됩니다. */
   h1 {
-    font-size: var(--text-display-s);
-    max-width: 18ch;
+    font-size: var(--text-display);
+    max-width: 17ch;
   }
   .intro {
     margin-top: var(--space-md);
@@ -91,13 +116,22 @@ const oldest = experience[experience.length - 1];
     margin-top: var(--space-2xs);
   }
 
+  /* 섹션 제목이 그 안의 항목 제목보다 커야 위계가 읽힙니다.
+   * 이전에는 섹션 17px / 자산 행 20px 이라 상하가 뒤집혀 있었습니다. */
   section > h2 {
-    font-size: var(--text-md);
-    font-weight: 600;
-    letter-spacing: 0;
-    padding-bottom: var(--space-2xs);
-    border-bottom: var(--rule-hair) solid var(--color-ink);
-    margin-bottom: var(--space-sm);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-2xs);
+  }
+  section > h2::after {
+    content: '';
+    display: block;
+    width: 1.75rem;
+    height: 2px;
+    margin-top: var(--space-2xs);
+    background: var(--color-accent);
   }
 
   /* 궤적 */
@@ -174,14 +208,38 @@ const oldest = experience[experience.length - 1];
   .index-head {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2xs);
-    margin-bottom: var(--space-sm);
+    gap: var(--space-xs);
+    margin-bottom: var(--space-lg);
   }
-  .index-head h2 {
-    border-bottom: 0;
-    padding-bottom: 0;
-    margin-bottom: 0;
+
+  /* 묶음 머리 — 라벨과 설명을 같은 줄에 두되 제목 위계는 주지 않습니다.
+   * 섹션 제목(h2)과 경쟁하면 위계가 다시 흐려집니다. */
+  .group + .group {
+    margin-top: var(--space-xl);
   }
+  .group-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-sm);
+    padding-bottom: var(--space-2xs);
+    border-bottom: 2px solid var(--color-ink);
+  }
+  .group-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-lg);
+  }
+  .group-note {
+    flex: 1;
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+  .group-n {
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+  }
+
   .rows {
     list-style: none;
     padding: 0;
