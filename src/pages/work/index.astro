@@ -23,13 +23,13 @@ const totalCalls = projects.reduce((n, p) => n + p.data.judgment.length, 0);
 
 <BaseLayout
   title="작업"
-  description="어디서 무슨 일을 했고 무엇을 판단했는지. 프로젝트별 케이스 스터디."
+  description="프로젝트별 케이스 스터디. 건별 문제 정의와 결정 사유를 기록했습니다."
 >
   <section class="head page">
-    <h1>무엇을 정했는지가 남아 있는 일들.</h1>
+    <h1>결정 사유가 남아 있는 일들.</h1>
     <p class="prose">
-      한 일만 적으면 경력기술서와 같아집니다. 각 건에서 무엇이 문제였고, 어떤 선택지 중에
-      무엇을 골랐고, 왜 그렇게 정했는지를 함께 적었습니다.
+      수행 업무만 나열하면 경력기술서와 다르지 않습니다. 건별로 문제 정의, 검토한 선택지,
+      결정 사유를 함께 기록했습니다.
     </p>
     <p class="count nums">프로젝트 {projects.length}건 · 기록한 판단 {totalCalls}건</p>
   </section>

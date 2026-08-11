@@ -41,7 +41,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
 
 <BaseLayout
   title="경험"
-  description="AI·Data 분야에서 서비스 기획부터 AX 사업개발까지. 어디서 무슨 일을 했고 무엇을 판단했는지."
+  description="AI·Data 분야에서 서비스 기획부터 AX 사업개발까지. 소속별 담당 업무와 주요 판단 기록."
 >
   <article class="doc page">
     <header>
@@ -52,7 +52,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
 
     <section class="weapons-section">
       <h2>무기</h2>
-      <p class="sec-lede">네 가지만 적었습니다. 각각 확인 가능한 근거를 붙였습니다.</p>
+      <p class="sec-lede">다섯 가지를 적었습니다. 각 항목에 확인 가능한 근거를 붙였습니다.</p>
       <ol class="weapons">
         {
           WEAPONS.map((w) => (
@@ -68,7 +68,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
 
     <section class="career-section">
       <h2>어디서 무슨 일을 했나</h2>
-      <p class="sec-lede">{span} 세 회사. 맡은 일은 콘텐츠 기획에서 사업개발까지 옮겨왔습니다.</p>
+      <p class="sec-lede">{span} 세 개 조직. 담당 업무는 콘텐츠 기획에서 사업개발로 이동했습니다.</p>
 
       {
         byCompany.map(({ exp, projects: ps }) => (

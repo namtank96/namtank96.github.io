@@ -54,6 +54,41 @@ for (const file of [...new Set(files)].sort()) {
   });
 }
 
+/*
+ * 추가 검사: `# sanitize-ok` 가 YAML 블록 스칼라(`>-`, `|`) 안에 들어간 경우.
+ * 블록 스칼라 안에서 `#` 은 주석이 아니라 본문입니다. 그대로 화면에 찍힙니다.
+ * 실제로 한 번 새어나갔던 사고라 기계로 막습니다.
+ */
+const BLOCK_START = /^[\w-]+:\s*[>|][-+]?\s*$/;
+
+for (const file of [...new Set(files)].sort()) {
+  if (!file.endsWith('.md')) continue;
+  let text;
+  try {
+    text = readFileSync(file, 'utf8');
+  } catch {
+    continue;
+  }
+  let inBlock = false;
+  text.split(/\r?\n/).forEach((line, i) => {
+    if (BLOCK_START.test(line)) {
+      inBlock = true;
+      return;
+    }
+    if (inBlock && line.trim() !== '' && !/^\s\s/.test(line)) inBlock = false;
+    if (inBlock && line.includes('sanitize-ok')) {
+      violations.push({
+        file: relative(ROOT, file).replace(/\\/g, '/'),
+        line: i + 1,
+        rule: 'rendered-comment',
+        why: 'YAML 블록 스칼라 안의 #은 주석이 아니라 본문입니다. 화면에 그대로 찍힙니다.',
+        hits: 'sanitize-ok',
+        text: line.trim().slice(0, 100),
+      });
+    }
+  });
+}
+
 if (violations.length === 0) {
   console.log(`\x1b[32m✓ 살균 게이트 통과\x1b[0m — ${files.length}개 파일, 금칙어 0건`);
   process.exit(0);

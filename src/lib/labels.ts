@@ -47,9 +47,9 @@ export const GROUP_LABEL = {
 } as const;
 
 export const GROUP_NOTE = {
-  flow: '발굴에서 인계까지, 한 건이 도는 순서대로.',
-  ops: '문서가 늘어나면서 뭐가 최신인지 모르겠을 때.',
-  build: '덱과 데모를 실제로 만들 때.',
+  flow: '발굴부터 인계까지, 한 건이 진행되는 순서.',
+  ops: '문서가 늘어나 최신본 판별이 어려울 때.',
+  build: '덱과 데모를 제작할 때.',
 } as const;
 
 export type Group = keyof typeof GROUP_LABEL;

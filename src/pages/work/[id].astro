@@ -31,7 +31,10 @@ const summary: [string, string][] = [
 ];
 
 /* 도식은 있는 프로젝트에만. 없으면 그 자리를 비웁니다 — 억지로 만들지 않습니다. */
-const DIAGRAMS: Record<string, { steps: [string, string, string]; caption: string }> = {
+const DIAGRAMS: Record<
+  string,
+  { steps: [string, string, string]; caption: string; backLabel?: string }
+> = {
   'diagnosis-to-shape': {
     steps: ['진단 스펙', '도출 규칙', '화면'],
     caption: '추적성 없는 화면은 만들지 않습니다. 어느 입력에서 나왔는지 달 수 없으면 그 화면은 만들지 않습니다.',
@@ -46,7 +49,28 @@ const DIAGRAMS: Record<string, { steps: [string, string, string]; caption: strin
   },
   'enterprise-council': {
     steps: ['회의 발화', '결정 · 미결 · 액션', '다음 회의 인계'],
-    caption: '담당과 완료 판정 기준이 없는 액션은 받지 않습니다. 없으면 미결로 내립니다.',
+    caption: '담당과 완료 판정 기준이 지정되지 않은 액션은 미결로 내립니다.',
+  },
+  'lms-service': {
+    steps: ['모바일 문제풀이', '계정 연동', 'PC 분석 · 맞춤 문제집'],
+    backLabel: '재유입',
+    caption:
+      '신규 사용자 확보 대신 기존 모바일 사용자를 묶는 방향을 택했습니다. 같은 아이디로 풀이 결과가 이어집니다.',
+  },
+  'edutech-content-service': {
+    steps: ['Airtable 학습 데이터', '노코드 빌더', '서비스 화면'],
+    backLabel: '운영 · VOC 반영',
+    caption: '개발 인력 없이 데이터와 화면을 직접 연결했습니다. 확장성을 포기하고 검증 속도를 택한 구성입니다.',
+  },
+  'ax-proposal': {
+    steps: ['아이템 발굴', '사업성 검토', '선제안'],
+    backLabel: '판단의 규격화',
+    caption: '매 건 반복되는 판단을 규격으로 남겨 다음 건에 재투입했습니다.',
+  },
+  'pipeline-kpi': {
+    steps: ['흩어진 문서', '취합 · 정리', '경영진 보고'],
+    backLabel: '최신본 확인',
+    caption: '되돌아가는 화살표가 문제였습니다. 맞는 정보를 찾는 일 자체에 공수가 들어가고 있었습니다.',
   },
 };
 const dia = DIAGRAMS[entry.id];
@@ -91,7 +115,7 @@ const links = d.assetRefs
       dia && (
         <div class="band">
           <div class="page">
-            <ChainDiagram steps={dia.steps} caption={dia.caption} />
+            <ChainDiagram steps={dia.steps} caption={dia.caption} backLabel={dia.backLabel} />
           </div>
         </div>
       )

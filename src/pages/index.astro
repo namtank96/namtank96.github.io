@@ -57,8 +57,8 @@ const oldest = experience[experience.length - 1];
       }
     </ol>
     <p class="track-note">
-      {oldest && `${oldest.data.start.getFullYear()}년부터`} 회사와 역할은 바뀌었지만 도메인은
-      바뀌지 않았습니다. <a href="/about">프로젝트 {projects.length}건으로 자세히 →</a>
+      {oldest && `${oldest.data.start.getFullYear()}년 이후`} 회사와 역할은 바뀌었으나 도메인은
+      유지됐습니다. <a href="/about">프로젝트 {projects.length}건으로 자세히 →</a>
     </p>
   </section>
 
@@ -66,7 +66,7 @@ const oldest = experience[experience.length - 1];
   <section class="work page">
     <div class="sec-head">
       <h2>프로젝트 {projects.length}건</h2>
-      <p class="sec-note">각 건마다 무엇이 문제였고 무엇을 정했는지 적어 두었습니다.</p>
+      <p class="sec-note">건별로 문제 정의와 결정 사항을 기록했습니다.</p>
     </div>
     <div class="pgrid">
       {projects.map((p) => <ProjectCard entry={p} />)}
