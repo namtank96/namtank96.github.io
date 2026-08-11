@@ -1,0 +1,103 @@
+---
+/* Hallmark · genre: editorial · macrostructure: Catalogue · theme: custom
+ * 프로젝트 목록. 회사별로 묶어 "어디서 무슨 일을 했는가"가 읽히게 합니다.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.order - a.data.order,
+);
+const experience = (await getCollection('experience', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.order - a.data.order,
+);
+
+const f = (d: Date) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+const byCompany = experience
+  .map((e) => ({ exp: e, items: projects.filter((p) => p.data.at === e.id) }))
+  .filter((g) => g.items.length > 0);
+
+const totalCalls = projects.reduce((n, p) => n + p.data.judgment.length, 0);
+---
+
+<BaseLayout
+  title="작업"
+  description="어디서 무슨 일을 했고 무엇을 판단했는지. 프로젝트별 케이스 스터디."
+>
+  <section class="head page">
+    <h1>무엇을 정했는지가 남아 있는 일들.</h1>
+    <p class="prose">
+      한 일만 적으면 경력기술서와 같아집니다. 각 건에서 무엇이 문제였고, 어떤 선택지 중에
+      무엇을 골랐고, 왜 그렇게 정했는지를 함께 적었습니다.
+    </p>
+    <p class="count nums">프로젝트 {projects.length}건 · 기록한 판단 {totalCalls}건</p>
+  </section>
+
+  {
+    byCompany.map(({ exp, items }) => (
+      <section class="grp page">
+        <div class="grp-head">
+          <h2>{exp.data.company}</h2>
+          <p class="muted nums">
+            {exp.data.role} · {f(exp.data.start)} – {exp.data.end ? f(exp.data.end) : '현재'}
+          </p>
+        </div>
+        <div class="pgrid">
+          {items.map((p) => (
+            <ProjectCard entry={p} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>
+
+<style>
+  .head {
+    padding-block: var(--space-2xl) var(--space-lg);
+  }
+  h1 {
+    font-size: var(--text-display-s);
+    max-width: 18ch;
+  }
+  .head p.prose {
+    margin-top: var(--space-md);
+    color: var(--color-ink-2);
+  }
+  .count {
+    margin-top: var(--space-sm);
+    font-size: var(--text-xs);
+    color: var(--color-ink-2);
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+  }
+
+  .grp {
+    padding-block: 0 var(--space-xl);
+  }
+  .grp-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-sm);
+    padding-bottom: var(--space-2xs);
+    border-bottom: 2px solid var(--color-ink);
+    margin-bottom: var(--space-md);
+  }
+  .grp-head h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+  }
+  .muted {
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  .pgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-md);
+  }
+</style>

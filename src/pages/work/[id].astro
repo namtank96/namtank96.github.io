@@ -1,0 +1,320 @@
+---
+/* Hallmark · genre: editorial · macrostructure: Long Document · theme: custom
+ * 프로젝트 케이스 스터디. 먹색 요약면(D) + 도식 밴드(E).
+ */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ChainDiagram from '../../components/ChainDiagram.astro';
+import { INDUSTRY_LABEL } from '../../lib/labels';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('projects', ({ data }) => !data.draft);
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+
+const f = (x: Date) => `${x.getFullYear()}.${String(x.getMonth() + 1).padStart(2, '0')}`;
+const period = `${f(d.start)} – ${d.end ? f(d.end) : '현재'}`;
+
+/* 요약 3열은 본문 첫 문장을 뽑아 씁니다. 따로 관리하면 두 벌이 되어 어긋납니다. */
+const first = (s: string) => (s.split(/(?<=\.)\s/)[0] ?? s).trim();
+const summary: [string, string][] = [
+  ['문제', first(d.situation)],
+  ['한 일', d.did[0]],
+  ['결과', d.result ? first(d.result) : '진행 중'],
+];
+
+/* 도식은 있는 프로젝트에만. 없으면 그 자리를 비웁니다 — 억지로 만들지 않습니다. */
+const DIAGRAMS: Record<string, { steps: [string, string, string]; caption: string }> = {
+  'diagnosis-to-shape': {
+    steps: ['진단 스펙', '도출 규칙', '화면'],
+    caption: '추적성 없는 화면은 만들지 않습니다. 어느 입력에서 나왔는지 달 수 없으면 그 화면은 만들지 않습니다.',
+  },
+  'doc-to-deck': {
+    steps: ['HTML · 마크다운', '변환 규격', '편집 가능한 덱'],
+    caption: '규격 안의 구조만 네이티브 객체로 떨어집니다. 규격 밖은 이미지로 폴백합니다.',
+  },
+  'internal-ai-platform': {
+    steps: ['기획 규격', '역할별 에이전트', '산출물'],
+    caption: '만드는 에이전트와 감사하는 에이전트를 분리했습니다. 감사 결과가 다시 규격으로 돌아옵니다.',
+  },
+  'enterprise-council': {
+    steps: ['회의 발화', '결정 · 미결 · 액션', '다음 회의 인계'],
+    caption: '담당과 완료 판정 기준이 없는 액션은 받지 않습니다. 없으면 미결로 내립니다.',
+  },
+};
+const dia = DIAGRAMS[entry.id];
+
+const all = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.order - a.data.order,
+);
+const idx = all.findIndex((x) => x.id === entry.id);
+const next = all[(idx + 1) % all.length];
+
+const assets = await getCollection('assets', ({ data }) => !data.draft);
+const links = d.assetRefs
+  .map((c) => assets.find((a) => a.data.code === c))
+  .filter((a): a is CollectionEntry<'assets'> => Boolean(a));
+---
+
+<BaseLayout title={d.title} description={first(d.situation)}>
+  <article class="case">
+    <div class="page head">
+      <p class="tags nums">{INDUSTRY_LABEL[d.industry]} · {period} · {d.role}</p>
+      <h1>{d.title}</h1>
+      {d.scale && <p class="scale nums">{d.scale}</p>}
+    </div>
+
+    {/* 먹색 요약면 — 페이지에서 여기 하나만 반전됩니다 */}
+    <div class="panel">
+      <div class="page panel-in">
+        {
+          summary.map(([k, v], i) => (
+            <div class="cell">
+              <p class="k nums">
+                <span class="num">{String(i + 1).padStart(2, '0')}</span> {k}
+              </p>
+              <p class="v">{v}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    {
+      dia && (
+        <div class="band">
+          <div class="page">
+            <ChainDiagram steps={dia.steps} caption={dia.caption} />
+          </div>
+        </div>
+      )
+    }
+
+    <div class="page">
+      <div class="body">
+      <section>
+        <h2>문제</h2>
+        <p>{d.situation}</p>
+      </section>
+
+      <section>
+        <h2>한 일</h2>
+        <ol class="did">{d.did.map((x) => <li>{x}</li>)}</ol>
+      </section>
+
+      {
+        d.judgment.length > 0 && (
+          <section>
+            <h2>내린 판단</h2>
+            <div class="calls">
+              {d.judgment.map((j, i) => (
+                <div class="call">
+                  <p class="n nums">{String(i + 1).padStart(2, '0')}</p>
+                  <p class="what">{j.call}</p>
+                  <p class="why">{j.why}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        d.result && (
+          <section>
+            <h2>결과</h2>
+            <p>{d.result}</p>
+          </section>
+        )
+      }
+
+      {
+        links.length > 0 && (
+          <section>
+            <h2>여기서 나온 자산</h2>
+            <ul class="assets">
+              {links.map((a) => (
+                <li>
+                  <a href={`/assets/${a.id}`}>
+                    <span class="acode nums">{a.data.code}</span>
+                    <span>{a.data.title}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      </div>
+    </div>
+
+    {
+      next && next.id !== entry.id && (
+        <nav class="page next" aria-label="다음 프로젝트">
+          <a href={`/work/${next.id}`}>
+            <span class="lbl">다음 프로젝트</span>
+            <span class="t">{next.data.title}</span>
+          </a>
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .case {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .tags {
+    font-size: var(--text-xs);
+    color: var(--color-ink-2);
+  }
+  h1 {
+    font-size: var(--text-display-s);
+    margin-top: var(--space-2xs);
+    max-width: 20ch;
+  }
+  .scale {
+    margin-top: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  /* 배경을 뒤집는 규칙 안에서 글자색도 같이 뒤집습니다 */
+  .panel {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    margin-top: var(--space-xl);
+  }
+  .panel-in {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-lg);
+    padding-block: var(--space-lg);
+  }
+  .k {
+    font-size: var(--text-xs);
+    color: var(--color-paper-dim);
+    margin-bottom: var(--space-2xs);
+  }
+  .num {
+    color: var(--color-accent-up);
+    font-family: var(--font-mono);
+  }
+  .v {
+    font-size: var(--text-md);
+    line-height: 1.6;
+  }
+
+  .band {
+    background: var(--color-paper-2);
+    border-block: var(--rule-hair) solid var(--color-rule);
+    padding-block: var(--space-xl);
+  }
+
+  .body {
+    margin-top: var(--space-2xl);
+    max-width: var(--measure);
+  }
+  section + section {
+    margin-top: var(--space-xl);
+  }
+  .body h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+  }
+  .body h2::after {
+    content: '';
+    display: block;
+    width: 1.75rem;
+    height: 2px;
+    margin-top: var(--space-2xs);
+    background: var(--color-accent);
+  }
+  .did {
+    padding-left: 1.15em;
+  }
+  .did li + li {
+    margin-top: var(--space-2xs);
+  }
+
+  .calls {
+    display: grid;
+    gap: var(--space-md);
+  }
+  .call {
+    padding-top: var(--space-xs);
+    border-top: var(--rule-hair) solid var(--color-rule);
+  }
+  .n {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+  .what {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin-top: var(--space-3xs);
+  }
+  .why {
+    margin-top: var(--space-2xs);
+    color: var(--color-ink-2);
+  }
+
+  .assets {
+    list-style: none;
+    padding: 0;
+  }
+  .assets li {
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+  }
+  .assets a {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding-block: var(--space-2xs);
+    text-decoration: none;
+  }
+  .assets a:hover {
+    color: var(--color-accent);
+  }
+  .acode {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
+  .next {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-md);
+    border-top: 2px solid var(--color-ink);
+  }
+  .next a {
+    display: grid;
+    gap: var(--space-3xs);
+    text-decoration: none;
+  }
+  .lbl {
+    font-size: var(--text-xs);
+    color: var(--color-ink-2);
+  }
+  .t {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+  }
+  .next a:hover .t {
+    color: var(--color-accent);
+  }
+</style>

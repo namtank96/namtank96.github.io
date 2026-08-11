@@ -6,6 +6,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AssetRow from '../components/AssetRow.astro';
 import ArcDiagram from '../components/ArcDiagram.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { profile, WEAPONS } from '../lib/profile';
 import { GROUP_LABEL, GROUP_NOTE, GROUP_ORDER, type Group } from '../lib/labels';
 
@@ -23,7 +24,9 @@ const grouped = GROUP_ORDER.map((g: Group) => ({
 const experience = (await getCollection('experience', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.order - a.data.order,
 );
-const projects = await getCollection('projects', ({ data }) => !data.draft);
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.order - a.data.order,
+);
 
 const f = (d: Date) => `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
 const oldest = experience[experience.length - 1];
@@ -57,6 +60,17 @@ const oldest = experience[experience.length - 1];
       {oldest && `${oldest.data.start.getFullYear()}년부터`} 회사와 역할은 바뀌었지만 도메인은
       바뀌지 않았습니다. <a href="/about">프로젝트 {projects.length}건으로 자세히 →</a>
     </p>
+  </section>
+
+  {/* 포트폴리오의 주인공은 작업입니다. 자산보다 위에 둡니다. */}
+  <section class="work page">
+    <div class="sec-head">
+      <h2>프로젝트 {projects.length}건</h2>
+      <p class="sec-note">각 건마다 무엇이 문제였고 무엇을 정했는지 적어 두었습니다.</p>
+    </div>
+    <div class="pgrid">
+      {projects.map((p) => <ProjectCard entry={p} />)}
+    </div>
   </section>
 
   <section class="weapons page">
@@ -174,6 +188,25 @@ const oldest = experience[experience.length - 1];
   .track-note a {
     color: var(--color-accent);
     white-space: nowrap;
+  }
+
+  /* 프로젝트 */
+  .work {
+    padding-block: 0 var(--space-2xl);
+  }
+  .sec-head {
+    margin-bottom: var(--space-lg);
+  }
+  .sec-note {
+    margin-top: var(--space-2xs);
+    max-width: var(--measure);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+  .pgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-md);
   }
 
   /* 무기 */

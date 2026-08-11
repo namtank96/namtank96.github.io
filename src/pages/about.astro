@@ -4,7 +4,6 @@
  */
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectBlock from '../components/ProjectBlock.astro';
 import { profile, METHOD, WEAPONS } from '../lib/profile';
 
 const experience = (await getCollection('experience', ({ data }) => !data.draft)).sort(
@@ -82,12 +81,22 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
             </div>
             <p class="company-summary">{exp.data.summary}</p>
 
+            {/* 상세는 케이스 스터디 페이지가 담당합니다. 여기는 목록만 —
+                같은 내용을 두 곳에 두면 한쪽이 반드시 낡습니다. */}
             {ps.length > 0 && (
-              <div class="projects">
+              <ul class="plist">
                 {ps.map((p) => (
-                  <ProjectBlock entry={p} assetLink={assetLink} />
+                  <li>
+                    <a href={`/work/${p.id}`}>
+                      <span class="pt">{p.data.title}</span>
+                      <span class="pm nums">
+                        {p.data.role}
+                        {p.data.judgment.length > 0 && ` · 판단 ${p.data.judgment.length}건`}
+                      </span>
+                    </a>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </div>
         ))
@@ -234,10 +243,37 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
     max-width: var(--measure);
     color: var(--color-ink-2);
   }
-  .projects {
-    display: grid;
-    gap: var(--space-lg);
-    margin-top: var(--space-lg);
+  .plist {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-md);
+  }
+  .plist li {
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+  }
+  .plist li:first-child {
+    border-top: var(--rule-hair) solid var(--color-rule);
+  }
+  .plist a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-sm);
+    padding-block: var(--space-2xs);
+    text-decoration: none;
+  }
+  .plist a:hover .pt {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+  .pt {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  .pm {
+    font-size: var(--text-xs);
+    color: var(--color-ink-2);
   }
 
   /* 일하는 방식 */
