@@ -22,3 +22,8 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# 살균 전 메모 — 실수로 저장소에 들어와도 커밋되지 않게
+포트폴리오_메모.md
+_inbox.md
+*_메모.md
