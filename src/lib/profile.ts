@@ -66,6 +66,37 @@ export const headlineLines = (s: string): string[][] =>
 export const plainText = (s: string): string => s.replace(/[|/]/g, ' ');
 
 /**
+ * 자격.
+ *
+ * `show: false` 는 보유하고 있으나 이 사이트에 싣지 않는 것입니다.
+ * 거짓이 아니라 편집입니다 — 포트폴리오는 전수 기록이 아니라 직무 근거를 보이는 자리이고,
+ * 직무와 무관한 항목을 같은 목록에 두면 관련 있는 항목의 밀도가 떨어집니다.
+ * 이력서(문서)에는 그대로 넣으시면 됩니다. 목적이 다른 매체입니다.
+ *
+ * `acquired` 는 확인된 것만 채웁니다. 모르는 값을 지어내지 않습니다 —
+ * 비어 있으면 취득 시기 없이 자격명과 발급기관만 표시됩니다.
+ */
+export const CERTS: {
+  name: string;
+  issuer: string;
+  acquired?: string;
+  note?: string;
+  show: boolean;
+}[] = [
+  { name: 'SQLD (SQL 개발자)', issuer: '한국데이터산업진흥원', show: true },
+  { name: 'Microsoft Azure Fundamentals (AZ-900)', issuer: 'Microsoft', show: true },
+  { name: 'Microsoft Azure AI Fundamentals (AI-900)', issuer: 'Microsoft', show: true },
+
+  /* 아래 둘은 보유 자격이나 기본 노출하지 않습니다.
+   * 워드프로세서는 사무 기본 자격이라 3년차 사업개발 지원자에 대해
+   * 채용 담당자에게 새로 알려주는 정보가 없습니다.
+   * 운전면허는 직무 요건이 아니라 이력서 인적사항 칸의 항목입니다.
+   * 싣기로 정하시면 show 만 true 로 바꾸면 됩니다. */
+  { name: '워드프로세서', issuer: '대한상공회의소', show: false },
+  { name: '운전면허', issuer: '도로교통공단', show: false },
+];
+
+/**
  * 무기 — 남들과 확실히 갈리는 지점.
  *
  * 태그 줄이 아니라 문장입니다. 그리고 각 무기에 근거가 붙습니다.

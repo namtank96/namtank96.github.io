@@ -4,7 +4,7 @@
  */
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { profile, headlineLines, METHOD, WEAPONS } from '../lib/profile';
+import { profile, headlineLines, METHOD, WEAPONS, CERTS } from '../lib/profile';
 
 const experience = (await getCollection('experience', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.order - a.data.order,
@@ -32,7 +32,7 @@ const byCompany = experience.map((e) => ({
   projects: projects.filter((p) => p.data.at === e.id),
 }));
 
-const certs = ['SQLD', 'MS Azure Fundamentals', 'MS Azure AI Fundamentals'];
+const certs = CERTS.filter((c) => c.show);
 const skills = [...new Set(experience.flatMap((e) => e.data.skills))];
 
 const first = experience[experience.length - 1];
@@ -135,9 +135,27 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
     </section>
 
     <section class="skills-section">
-      <h2>역량 · 자격</h2>
+      <h2>역량</h2>
       <p class="tagline">{skills.join(' · ')}</p>
-      <p class="tagline muted nums">{certs.join(' · ')}</p>
+    </section>
+
+    {/* 자격은 역량과 성격이 다릅니다 — 역량은 스스로 적는 것이고
+        자격은 제3자가 확인해 준 것입니다. 발급기관을 함께 적는 이유입니다. */}
+    <section class="certs-section">
+      <h2>자격</h2>
+      <ul class="certs">
+        {
+          certs.map((c) => (
+            <li>
+              <span class="cname">{c.name}</span>
+              <span class="cmeta nums">
+                {c.issuer}
+                {c.acquired && <span class="csep"> · {c.acquired}</span>}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
     </section>
 
     <section class="prose">
@@ -349,6 +367,35 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
   }
   .tagline + .tagline {
     margin-top: var(--space-2xs);
+  }
+
+  /* 자격 — 경력의 프로젝트 목록(.plist)과 같은 괘선 행 어휘를 씁니다.
+   * 자격명은 좌측, 확인 주체와 시기는 우측. 배지 알약을 쓰지 않습니다. */
+  .certs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: var(--measure);
+  }
+  .certs li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3xs) var(--space-sm);
+    padding-block: var(--space-2xs);
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+  }
+  .certs li:first-child {
+    border-top: var(--rule-hair) solid var(--color-rule);
+  }
+  .cname {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+  .cmeta {
+    font-size: var(--text-xs);
+    color: var(--color-ink-2);
   }
 
   section.prose :global(p) {
