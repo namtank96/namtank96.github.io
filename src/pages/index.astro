@@ -34,7 +34,20 @@ const oldest = experience[experience.length - 1];
 
 <BaseLayout>
   <section class="lede page">
-    <h1>{headlineLines(profile.headline).map((l) => <span class="line">{l}</span>)}</h1>
+    <h1>
+      {
+        headlineLines(profile.headline).map((segs) => (
+          <span class="line">
+            {segs.map((seg, i) => (
+              <span class="seg">
+                {i > 0 ? ' ' : ''}
+                {seg}
+              </span>
+            ))}
+          </span>
+        ))
+      }
+    </h1>
     <div class="intro prose">
       {profile.intro.map((line) => <p>{line}</p>)}
     </div>
@@ -125,6 +138,16 @@ const oldest = experience[experience.length - 1];
    * 좁은 화면에서 조각이 또 넘치면 그때만 자연 줄바꿈이 일어납니다. */
   h1 .line {
     display: block;
+  }
+  /* 조각은 기본이 인라인. 좁은 화면에서만 각자 줄을 차지합니다.
+   * 안 그러면 375 에서 첫 줄이 다시 "확정된 게 / 없는" 으로 갈라집니다. */
+  h1 .seg {
+    display: inline;
+  }
+  @media (max-width: 40rem) {
+    h1 .seg {
+      display: block;
+    }
   }
   .intro {
     margin-top: var(--space-md);

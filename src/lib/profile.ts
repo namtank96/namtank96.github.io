@@ -56,12 +56,14 @@ export const profile = {
 
 /**
  * 표제의 손 줄바꿈.
- * `|` 로 끊긴 조각을 배열로 돌려줍니다. 화면에서는 조각마다 한 줄입니다.
+ * 바깥 배열이 줄(`|`), 안쪽 배열이 그 줄의 조각(`/`)입니다.
+ * 조각은 넓은 화면에서 한 줄로 붙고, 좁은 화면에서만 각자 줄을 차지합니다.
  */
-export const headlineLines = (s: string): string[] => s.split('|');
+export const headlineLines = (s: string): string[][] =>
+  s.split('|').map((line) => line.split('/'));
 
 /** 같은 문자열의 평문판 — meta·OG 처럼 줄바꿈이 의미 없는 자리에 씁니다. */
-export const plainText = (s: string): string => s.replace(/\|/g, ' ');
+export const plainText = (s: string): string => s.replace(/[|/]/g, ' ');
 
 /**
  * 무기 — 남들과 확실히 갈리는 지점.

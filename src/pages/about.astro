@@ -45,7 +45,20 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
 >
   <article class="doc page">
     <header>
-      <h1>{headlineLines(profile.headlineAbout).map((l) => <span class="line">{l}</span>)}</h1>
+      <h1>
+      {
+        headlineLines(profile.headlineAbout).map((segs) => (
+          <span class="line">
+            {segs.map((seg, i) => (
+              <span class="seg">
+                {i > 0 ? ' ' : ''}
+                {seg}
+              </span>
+            ))}
+          </span>
+        ))
+      }
+    </h1>
       <p class="lede">{profile.intro[0]}</p>
       <p class="lede">{profile.intro[1]}</p>
     </header>
@@ -150,6 +163,16 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
    * 손으로 정한 줄바꿈이 무너집니다. */
   h1 .line {
     display: block;
+  }
+  /* 조각은 기본이 인라인. 좁은 화면에서만 각자 줄을 차지합니다.
+   * 안 그러면 375 에서 첫 줄이 다시 "확정된 게 / 없는" 으로 갈라집니다. */
+  h1 .seg {
+    display: inline;
+  }
+  @media (max-width: 40rem) {
+    h1 .seg {
+      display: block;
+    }
   }
   .lede {
     margin-top: var(--space-md);
