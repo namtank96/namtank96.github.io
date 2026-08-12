@@ -33,14 +33,17 @@ Hallmark 카탈로그의 폰트 allowlist는 전부 라틴 전용이라, 어떤 
 색조(hue)는 150 하나로 통일합니다. 종이·먹·괘선이 같은 가족으로 보이게 하려는 것이고,
 액센트만 반대편 색조(27)에 둡니다.
 
-- `--color-paper`    oklch(97.6% 0.009 150) — 초록 기운이 도는 종이. 순백 금지
-- `--color-paper-2`  oklch(95% 0.013 150)
+- `--color-paper`    oklch(97.6% 0.02 150)  — 초록 기운이 도는 종이. 순백 금지
+- `--color-paper-2`  oklch(95% 0.028 150)
 - `--color-ink`      oklch(22% 0.012 150)   — 먹색. 순흑 금지
-- `--color-ink-2`    oklch(44% 0.011 150)   — paper 대비 5.3:1
-- `--color-rule`     oklch(86% 0.012 150)
-- `--color-paper-dim` oklch(78% 0.012 150)  — 먹색 면 위 보조 텍스트. ink 대비 8.66:1
+- `--color-ink-2`    oklch(44% 0.011 150)   — paper 대비 7.26:1
+- `--color-rule`     oklch(86% 0.024 150)
+- `--color-paper-dim` oklch(78% 0.016 150)  — 먹색 면 위 보조 텍스트. ink 대비 8.68:1
 - `--color-accent`   oklch(46% 0.145 27)    — 교정용 붉은 펜
-- `--color-accent-ink` oklch(97.6% 0.009 150)
+- `--color-accent-ink` oklch(97.6% 0.02 150) — paper 와 항상 같은 값
+
+채도는 0.009 에서 0.020 으로 올렸습니다. 0.009 는 배경 초록 편향이 G-R=6 밖에 안 돼
+흰색과 구분되지 않았습니다. **더 내리지 마세요** — 내리면 "초록 계열"이 렌더되지 않습니다.
 - `--color-accent-up` oklch(74% 0.12 30)    — 먹색 면 위 액센트. ink 대비 7.13:1
 - `--color-focus`    oklch(46% 0.145 27)
 
