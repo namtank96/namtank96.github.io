@@ -33,7 +33,7 @@ const V = { x: 92, w: 220, h: 54, ys: [8, 105, 202], cx: 202, rail: 44 };
         const x = 8 + i * H.gap;
         return (
           <g>
-            <rect x={x} y={H.y} width={H.w} height={H.h} rx="2" class="box" />
+            <rect x={x} y={H.y} width={H.w} height={H.h} rx="8" class="box" />
             <text x={H.cx[i]} y={H.y + 37} class="lbl">{s}</text>
             {i < 2 && (
               <g class="arrow">
@@ -59,7 +59,7 @@ const V = { x: 92, w: 220, h: 54, ys: [8, 105, 202], cx: 202, rail: 44 };
     {
       steps.map((s, i) => (
         <g>
-          <rect x={V.x} y={V.ys[i]} width={V.w} height={V.h} rx="2" class="box" />
+          <rect x={V.x} y={V.ys[i]} width={V.w} height={V.h} rx="8" class="box" />
           <text x={V.cx} y={V.ys[i] + 33} class="lbl">{s}</text>
           {i < 2 && (
             <g class="arrow">
@@ -108,14 +108,14 @@ const V = { x: 92, w: 220, h: 54, ys: [8, 105, 202], cx: 202, rail: 44 };
   /* 상자 안은 면 색과 같습니다 — 윤곽선만으로 그립니다.
    * 여기만 밝게 하면 도식 안에 흰 조각이 생깁니다. */
   .box {
-    fill: var(--chain-surface);
+    fill: var(--color-paper);
     stroke: var(--color-ink);
     stroke-width: 1;
   }
   .lbl {
     fill: var(--color-ink);
     font-family: var(--font-display);
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 600;
     text-anchor: middle;
   }
@@ -127,12 +127,12 @@ const V = { x: 92, w: 220, h: 54, ys: [8, 105, 202], cx: 202, rail: 44 };
     fill: var(--color-ink);
   }
   .back path {
-    stroke: var(--color-accent);
+    stroke: var(--color-accent-bright);
     stroke-width: 1.5;
     stroke-dasharray: 4 4;
   }
   .back polygon {
-    fill: var(--color-accent);
+    fill: var(--color-accent-bright);
   }
   /* 고정폭 판때기 대신 글자 자체에 면 색 테두리를 둘러 점선을 지웁니다.
    * 라벨이 길어져도 판이 모자라지 않습니다. */

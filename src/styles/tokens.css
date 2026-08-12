@@ -1,89 +1,102 @@
-/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V5
- * Hallmark · genre: editorial · theme: custom · design-system: design.md
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4
+ * genre: product-ui · theme: custom · design-system: design.md · designed-as-app
  * contrast: pass (40-41) · slop: pass (42-45) · honest: pass (46) · chrome: pass (47)
  * tokens: pass (48) · responsive: pass (49) · mobile: pass (34, 49, 50-57)
- * vibe: 교정용 붉은 펜이 놓인 따뜻한 종이
- * paper oklch(97.8% 0.006 85) · accent oklch(46% 0.145 27) warm
- * display Noto Serif KR · body Pretendard Variable
- * axes — paper-band: light / display-style: serif / accent-hue: warm
+ *
+ * 출처: 사내 디자인 시스템의 **범용 부분만** 옮긴 것입니다.
+ * 브랜드 자산(로고·브랜드 레드 #EC1C24·제품명)은 가져오지 않았습니다.
+ * 개인 사이트에 고용주 로고와 브랜드색을 쓰면 소속·승인 관계를 오인시키고,
+ * 이 저장소의 살균 게이트가 조직명을 금칙어로 잡습니다.
  *
  * 규칙: 컴포넌트는 raw 색상값을 쓰지 않고 var(--color-*) 로만 소비합니다.
  */
 :root {
   /* ── 색 ─────────────────────────────────────────────
-   * 순백·순흑을 쓰지 않습니다. 전부 앵커 색조 쪽으로 틴트합니다. */
-  /* 초록 기운이 도는 종이. 색조(hue 150)를 낮은 채도로 전 계열에 통일해
-   * 종이·먹·괘선이 같은 가족으로 보이게 합니다. */
-  /* 채도(chroma)는 0.009 → 0.020 으로 올렸습니다. 0.009 에서는 배경이
-   * rgb(243,249,244) 라 초록 편향이 G-R=6 밖에 안 돼 흰색과 구분되지 않았습니다.
-   * 0.020 은 rgb(238,251,240) — 초록인 줄 알아보면서 인쇄지로 읽히는 선입니다. */
-  --color-paper: oklch(97.6% 0.02 150);
-  --color-paper-2: oklch(95% 0.028 150);
-  --color-ink: oklch(22% 0.012 150);
-  /* 44%: paper 대비 7.26:1. 47%로 두면 본문 기준(4.5:1)에 여유가 없습니다. */
-  --color-ink-2: oklch(44% 0.011 150);
-  --color-rule: oklch(86% 0.024 150);
+   * 중립 램프. 흰 캔버스 위에 헤어라인으로 구획하는 구성입니다. */
+  --color-paper: #ffffff; /* 캔버스·카드 */
+  --color-paper-2: #fafafa; /* 한 단 내려간 면 */
+  --color-paper-3: #f5f5f5; /* hover·눌림 */
+  --color-ink: #0a0a0a; /* 본문. 흰 배경 19.80:1 */
+  --color-ink-2: #525252; /* 보조. 7.81:1 */
+  --color-ink-3: #737373; /* 3차. 4.74:1 — 본문 하한 */
+  /* 2.52:1. 텍스트로 쓰지 않습니다 — 아이콘·축 눈금 전용 */
+  --color-ink-4: #a3a3a3;
+  --color-rule: #eaeaea; /* 기본 구분선 */
+  --color-rule-2: #d4d4d4; /* hover 시 테두리 */
 
-  /* 먹색 면 위에 올리는 보조 텍스트. ink 대비 8.68:1 로 AA 통과.
-   * paper 를 그대로 흐리게 쓰면 대비가 깨지므로 별도 토큰으로 둡니다. */
-  --color-paper-dim: oklch(78% 0.016 150);
+  /* 먹색 면 위 보조 텍스트. ink 대비 8.04:1 */
+  --color-paper-dim: #a3a3a3;
 
-  /* 교정용 붉은 펜. 뷰포트당 5% 미만. */
-  --color-accent: oklch(46% 0.145 27);
-  /* paper 와 같은 값을 유지해야 합니다 — 어긋나면 액센트 면 위 흰색만 다른 흰색이 됩니다. */
-  --color-accent-ink: oklch(97.6% 0.02 150);
-  /* 먹색 면 위에서 쓰는 액센트. 기본 액센트는 ink 대비 2.25:1 라 못 씁니다. */
-  --color-accent-up: oklch(74% 0.12 30);
-  --color-focus: oklch(46% 0.145 27);
+  /* 액센트 그린.
+   * bright(#22C55E)는 흰 배경 2.28:1 이라 **글자에 쓰면 안 됩니다.**
+   * 점·괘선·포커스 링·채움처럼 글자가 아닌 자리에만 씁니다.
+   * 글자용은 한 단 어두운 값을 따로 둡니다 — 5.02:1. */
+  --color-accent: #15803d; /* 액센트 텍스트·링크. 5.02:1 */
+  --color-accent-bright: #22c55e; /* 점·괘선·포커스 링. 글자 금지 */
+  --color-accent-ink: #ffffff; /* accent 채움 위 글자 */
+  --color-accent-up: #22c55e; /* 먹색 면 위 액센트. ink 대비 8.68:1 */
+  --color-focus: #22c55e;
+
+  /* 상태 — 복사 실패 등 */
+  --color-error: #dc2626;
 
   /* ── 타이포 ─────────────────────────────────────────
-   * Noto Serif KR 이 한글과 라틴을 모두 담당하므로 글리프 폴백 불일치가 없습니다.
-   * 본문은 Pretendard — 한글 가독성이 높고 dynamic-subset 으로 가볍습니다. */
-  --font-display: 'Noto Serif KR', 'Apple SD Gothic Neo', serif;
-  --font-body: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
-  --font-mono: ui-monospace, 'D2Coding', Consolas, monospace;
+   * 산세리프 1종 + 모노 1종. 디스플레이 서체를 따로 두지 않습니다 —
+   * 위계는 크기와 웨이트로만 만듭니다. */
+  --font-display: 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo',
+    system-ui, sans-serif;
+  --font-body: var(--font-display);
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
 
-  /* 한글 기준 타입 스케일.
-   * 크기는 KRDS(대한민국 정부 디지털 서비스 디자인 시스템)가 한글로 검증한
-   * 값에 맞췄습니다 — 본문 17px, 헤딩 19 / 24 / 32 / 40.
-   * 라틴 기준 모듈러 스케일을 그대로 쓰면 한글에서 작은 단계가 뭉개집니다.
-   *
-   * 작은 쪽(13~17)은 KRDS 처럼 고정하고 큰 쪽만 clamp 로 줄입니다.
-   * 전부 유동시키면 작은 텍스트까지 흔들려 위계가 더 흐려집니다. */
-  --text-xs: 0.8125rem; /* 13 — 메타·배지 전용 */
-  --text-sm: 0.9375rem; /* 15 */
-  --text-md: 1.0625rem; /* 17 — 본문 */
-  --text-lg: 1.1875rem; /* 19 */
-  --text-xl: 1.5rem; /*    24 — 섹션 제목 */
-  --text-2xl: 2rem; /*      32 — 페이지 제목 */
-  --text-display-s: clamp(2rem, 4.5vw, 2.5rem); /* 32 → 40 */
-  --text-display: clamp(2.25rem, 6vw, 3.25rem); /* 36 → 52 — 홈 헤드라인 전용 */
+  /* 시스템 스케일 12 / 14 / 16 / 18 / 22 / 30 / 40.
+   * 시스템 기본은 14 이지만 그건 표가 빽빽한 관리 화면 기준입니다.
+   * 이 사이트는 60ch 짜리 한글 산문을 읽는 곳이라 본문은 16 을 씁니다.
+   * 14 는 내비·버튼·카드 메타 같은 UI 자리에만 둡니다. */
+  --text-xs: 0.75rem; /*   12 — 배지·메타 */
+  --text-sm: 0.875rem; /*  14 — UI 기본 */
+  --text-md: 1rem; /*      16 — 본문 */
+  --text-lg: 1.125rem; /*  18 */
+  --text-xl: 1.375rem; /*  22 — 섹션 제목 */
+  --text-2xl: 1.875rem; /* 30 — 페이지 제목 */
+  --text-display-s: clamp(1.5rem, 4vw, 1.875rem); /* 24 → 30 */
+  --text-display: clamp(1.875rem, 5.5vw, 2.5rem); /* 30 → 40 */
 
-  --leading-tight: 1.2;
-  --leading-normal: 1.72;
+  --leading-tight: 1.15;
+  /* 시스템의 1.5 는 14px 관리 화면 값입니다.
+   * 16px 한글 산문에는 부족합니다(KRDS 권고 150% 이상). */
+  --leading-normal: 1.7;
 
-  /* ── 간격 (4pt) ─────────────────────────────────── */
-  --space-3xs: 0.25rem;
-  --space-2xs: 0.5rem;
-  --space-xs: 0.75rem;
-  --space-sm: 1rem;
-  --space-md: 1.5rem;
-  --space-lg: 2rem;
-  --space-xl: 3rem;
-  --space-2xl: 4.5rem;
-  --space-3xl: 7rem;
+  /* ── 간격 (4px) ─────────────────────────────────── */
+  --space-3xs: 0.25rem; /*  4 */
+  --space-2xs: 0.5rem; /*   8 */
+  --space-xs: 0.75rem; /*  12 */
+  --space-sm: 1rem; /*     16 */
+  --space-md: 1.5rem; /*   24 */
+  --space-lg: 2rem; /*     32 */
+  --space-xl: 3rem; /*     48 */
+  --space-2xl: 4rem; /*    64 */
+  --space-3xl: 6rem; /*    96 */
 
   /* ── 선·형태 ────────────────────────────────────── */
   --rule-hair: 1px;
-  --radius-card: 2px;
-  --radius-input: 2px;
+  --radius-sm: 6px; /*   배지 */
+  --radius-input: 8px; /* 버튼·입력 */
+  --radius-card: 10px; /* 카드 */
+  --radius-pill: 999px;
+
+  /* ── 높이 — 기본은 평면 ─────────────────────────── */
+  --shadow-0: none;
+  --shadow-popover: 0 8px 24px rgba(10, 10, 10, 0.08);
+  --shadow-modal: 0 24px 48px rgba(10, 10, 10, 0.16);
 
   /* ── 모션 ───────────────────────────────────────── */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-short: 180ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-short: 120ms;
+  --dur-base: 180ms;
 
   /* ── 지면 ───────────────────────────────────────── */
   --measure: 62ch;
-  --page-max: 62rem;
-  --page-gutter: clamp(1rem, 4vw, 2rem);
+  --page-max: 64rem;
+  --page-gutter: clamp(1rem, 4vw, 1.5rem);
+  --topbar-h: 64px;
 }

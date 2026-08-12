@@ -38,11 +38,21 @@ const step = arcStep(code);
 
   a {
     display: grid;
+    border-radius: var(--radius-input);
+    padding-inline: var(--space-2xs);
+    margin-inline: calc(-1 * var(--space-2xs));
+    transition: background-color var(--dur-short) var(--ease-out);
     grid-template-columns: 3.25rem minmax(0, 1fr) auto;
     align-items: baseline;
     gap: var(--space-sm);
     padding-block: var(--space-sm);
     text-decoration: none;
+  }
+  a:hover {
+    background: var(--color-paper-2);
+  }
+  a:active {
+    scale: 0.995;
   }
   a:hover .title {
     color: var(--color-accent);
@@ -65,7 +75,7 @@ const step = arcStep(code);
   .title {
     display: block;
     font-family: var(--font-display);
-    font-weight: 500;
+    font-weight: 600;
     font-size: var(--text-md);
     line-height: 1.4;
     overflow-wrap: anywhere;

@@ -92,7 +92,9 @@ const lineCount = text.split('\n').length;
 
 <style>
   .copy-block {
-    border: var(--rule-hair) solid var(--color-ink);
+    /* 먹색 테두리는 편집물 어휘였습니다. 평면 시스템에서는 검은 액자가 됩니다.
+     * 보통 카드(rule)보다는 한 단 진하게 둬서 페이지의 주 CTA 임은 유지합니다. */
+    border: var(--rule-hair) solid var(--color-rule-2);
     border-radius: var(--radius-card);
     background: var(--color-paper-2);
     overflow: hidden;
@@ -103,7 +105,8 @@ const lineCount = text.split('\n').length;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-sm);
-    padding: var(--space-2xs) var(--space-2xs) var(--space-2xs) var(--space-xs);
+    /* 동심 라디우스 — 바깥 10px = 안쪽 6px + 여백 4px */
+    padding: var(--space-3xs) var(--space-3xs) var(--space-3xs) var(--space-xs);
     border-bottom: var(--rule-hair) solid var(--color-rule);
   }
 
@@ -122,7 +125,7 @@ const lineCount = text.split('\n').length;
     padding: var(--space-2xs) var(--space-md);
     min-height: 2.75rem; /* 44px 히트 타깃 */
     border: var(--rule-hair) solid var(--color-ink);
-    border-radius: var(--radius-input);
+    border-radius: var(--radius-sm);
     background: var(--color-ink);
     color: var(--color-paper);
     cursor: pointer;
@@ -131,8 +134,8 @@ const lineCount = text.split('\n').length;
     transition: background-color var(--dur-short) var(--ease-out);
   }
   button:hover {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
+    background: var(--color-ink-2);
+    border-color: var(--color-ink-2);
     /* 액센트가 배경이 되면 그 위 글자는 accent-ink 가 담당합니다.
      * 값이 paper 와 같더라도 의미가 다른 토큰이라 섞어 쓰지 않습니다. */
     color: var(--color-accent-ink);
@@ -145,8 +148,8 @@ const lineCount = text.split('\n').length;
   button[data-state='alert'],
   button[data-state='alert']:hover {
     background: var(--color-paper);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--color-error);
+    color: var(--color-error);
   }
   button:disabled {
     opacity: 0.55;

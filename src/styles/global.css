@@ -42,12 +42,13 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-style: normal; /* 이탤릭 헤더 금지 */
-  font-weight: 600;
+  font-weight: 700;
   line-height: var(--leading-tight);
 
   /* 자간 0. 음수 자간은 라틴 디스플레이 조판의 관습입니다.
    * 한글 음절은 이미 정사각 틀에 균등 배치돼 있어서 음수를 주면
-   * ㅁ·ㅇ·ㅎ 의 속공간이 닫히고 글자가 번져 보입니다. */
+   * ㅁ·ㅇ·ㅎ 의 속공간이 닫히고 글자가 번져 보입니다.
+   * 시스템의 tracking-tight(-0.02em)는 라틴 기준이라 따르지 않습니다. */
   letter-spacing: 0;
 
   /* text-wrap: balance 를 쓰지 않습니다.
