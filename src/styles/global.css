@@ -42,10 +42,18 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-style: normal; /* 이탤릭 헤더 금지 */
-  font-weight: 700;
+  font-weight: 600;
   line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
-  text-wrap: balance;
+
+  /* 자간 0. 음수 자간은 라틴 디스플레이 조판의 관습입니다.
+   * 한글 음절은 이미 정사각 틀에 균등 배치돼 있어서 음수를 주면
+   * ㅁ·ㅇ·ㅎ 의 속공간이 닫히고 글자가 번져 보입니다. */
+  letter-spacing: 0;
+
+  /* text-wrap: balance 를 쓰지 않습니다.
+   * keep-all 때문에 줄바꿈 기회가 어절 경계뿐인데, balance 는 어절만 보고
+   * 의미 단위를 보지 않습니다. "확정된 게 / 없는" 처럼 한 덩어리를 갈라 놓습니다.
+   * 한글 표제는 손으로 끊습니다 — profile.ts 의 `|` 마커를 보세요. */
 }
 
 /* text-wrap: pretty 는 짧은 설명문에만 답니다.

@@ -1,7 +1,7 @@
 ---
 code: A01
 title: 기획 리포 운영 규칙
-summary: 에이전트가 매 세션 준수할 불변 규칙만 남긴 CLAUDE.md. 규격 전문은 옮겨 적지 않는다.
+summary: 에이전트가 매 세션 준수할 불변 규칙만 남긴 CLAUDE.md. 규격 전문은 수록하지 않음.
 kind: rules
 install: 프로젝트 루트 CLAUDE.md
 payload: a01-repo-rules

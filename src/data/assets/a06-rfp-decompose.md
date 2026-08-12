@@ -1,7 +1,7 @@
 ---
 code: A06
 title: RFP · 과업지시서 해체
-summary: RFP 원문을 요구 항목표로 분해하고, 적혀 있지 않은 것을 질의 목록으로 뽑는다.
+summary: RFP 원문을 요구 항목표로 분해하고, 적혀 있지 않은 사항을 질의 목록으로 도출.
 kind: prompt
 install: 대화창에 붙여넣기
 payload: a06-rfp-decompose

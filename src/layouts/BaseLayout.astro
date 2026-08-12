@@ -4,7 +4,7 @@
  */
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
-import { profile } from '../lib/profile';
+import { profile, plainText } from '../lib/profile';
 
 interface Props {
   title?: string;
@@ -56,7 +56,7 @@ const path = Astro.url.pathname;
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content={`${profile.headline} ${profile.name} 포트폴리오`}
+      content={`${plainText(profile.headline)} ${profile.name} 포트폴리오`}
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL('/og.png', Astro.site).href} />
@@ -69,10 +69,12 @@ const path = Astro.url.pathname;
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
     />
-    {/* Noto Serif KR — display 전용. 600/700 두 웨이트만. */}
+    {/* Noto Serif KR — display 전용. 500/600 두 웨이트만.
+        700 을 뺀 이유: 한글 명조는 크기로 위계를 만들고 웨이트는 낮게 씁니다.
+        제목마다 700 을 쓰면 편집물이 아니라 보고서 인상이 됩니다. */}
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600&display=swap"
     />
   </head>
 
@@ -142,18 +144,20 @@ const path = Astro.url.pathname;
         text-align: center;
       }
 
+      /* 0.1em 은 라틴 소형 대문자 라벨의 자간입니다.
+       * 한글에 그대로 주면 어절이 풀어져 라벨로 안 읽힙니다. */
       .mast-line {
         font-size: var(--text-xs);
-        letter-spacing: 0.1em;
+        letter-spacing: 0.04em;
         color: var(--color-ink-2);
       }
 
       .mast-name {
         font-family: var(--font-display);
-        font-weight: 700;
+        font-weight: 600;
         font-size: clamp(2rem, 6vw, 3.25rem);
         line-height: 1;
-        letter-spacing: -0.03em;
+        letter-spacing: 0;
         text-decoration: none;
       }
 

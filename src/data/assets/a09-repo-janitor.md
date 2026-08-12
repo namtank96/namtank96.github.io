@@ -1,7 +1,7 @@
 ---
 code: A09
 title: 리포 정리 감시관
-summary: 정리 대상을 찾아 제안만 하는 감사관. 자동 삭제 금지, 삭제와 추적해제를 분리한다.
+summary: 정리 대상을 찾아 제안만 하는 감사관. 자동 삭제 금지, 삭제와 추적해제 분리.
 kind: subagent
 group: ops
 install: .claude/agents/repo-janitor.md

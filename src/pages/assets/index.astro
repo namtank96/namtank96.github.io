@@ -6,7 +6,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AssetCard from '../../components/AssetCard.astro';
 import ArcDiagram from '../../components/ArcDiagram.astro';
-import { profile } from '../../lib/profile';
+import { profile, headlineLines } from '../../lib/profile';
 import { GROUP_LABEL, GROUP_NOTE, GROUP_ORDER, type Group } from '../../lib/labels';
 
 const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
@@ -27,7 +27,7 @@ const grouped = GROUP_ORDER.map((g: Group) => ({
   description="사업개발·사업관리 실무에서 사용하는 에이전트 운영 규칙과 업무 규격."
 >
   <section class="head page">
-    <h1>{profile.headlineAssets}</h1>
+    <h1>{headlineLines(profile.headlineAssets).map((l) => <span class="line">{l}</span>)}</h1>
     <p class="prose">
       제안·진단·검토에서 반복되는 판단을 규격으로 정리한 문서입니다. 실무에서 사용하던 파일에서
       회사·고객 정보만 제거해 공개합니다. 붙여넣으면 바로 동작합니다.
@@ -62,7 +62,11 @@ const grouped = GROUP_ORDER.map((g: Group) => ({
   }
   h1 {
     font-size: var(--text-display-s);
-    max-width: 18ch;
+  }
+  /* 손으로 끊은 표제 — 조각마다 한 줄. max-width 로 또 자르면
+   * 손으로 정한 줄바꿈이 무너집니다. */
+  h1 .line {
+    display: block;
   }
   .head p.prose {
     margin-top: var(--space-md);
@@ -72,7 +76,7 @@ const grouped = GROUP_ORDER.map((g: Group) => ({
     margin-top: var(--space-sm);
     font-size: var(--text-xs);
     color: var(--color-ink-2);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.04em;
   }
 
   .group {
@@ -90,12 +94,12 @@ const grouped = GROUP_ORDER.map((g: Group) => ({
   .group-head h2 {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: 0;
   }
   .n {
     font-size: var(--text-sm);
-    font-weight: 400;
+    font-weight: 500;
     color: var(--color-accent);
     vertical-align: super;
   }

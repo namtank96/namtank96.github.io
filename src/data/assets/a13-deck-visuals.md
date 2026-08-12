@@ -1,7 +1,7 @@
 ---
 code: A13
 title: 덱 · 시각자산 제작 규칙
-summary: 도식을 만드는 에이전트. 토큰은 소비만 하고, 오프라인에서 깨지는 의존은 금지한다.
+summary: 도식을 만드는 에이전트. 토큰은 소비만 하며, 오프라인에서 깨지는 의존은 금지.
 kind: subagent
 group: build
 install: .claude/agents/visuals.md

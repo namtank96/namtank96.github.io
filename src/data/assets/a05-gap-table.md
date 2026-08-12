@@ -1,7 +1,7 @@
 ---
 code: A05
 title: 경쟁·대안 3열 갭표
-summary: 통째 비교로 막히지 않는 벤치마킹. 조각 하나에 해당 영역을 가장 잘 구현한 대상 하나만 대응시킨다.
+summary: 통째 비교로 막히지 않는 벤치마킹. 조각 하나에 해당 영역을 가장 잘 구현한 대상 하나만 대응.
 kind: prompt
 install: 대화창에 붙여넣기
 payload: a05-gap-table

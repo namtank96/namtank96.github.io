@@ -4,7 +4,7 @@
  */
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { profile, METHOD, WEAPONS } from '../lib/profile';
+import { profile, headlineLines, METHOD, WEAPONS } from '../lib/profile';
 
 const experience = (await getCollection('experience', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.order - a.data.order,
@@ -45,14 +45,14 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
 >
   <article class="doc page">
     <header>
-      <h1>{profile.headlineAbout}</h1>
+      <h1>{headlineLines(profile.headlineAbout).map((l) => <span class="line">{l}</span>)}</h1>
       <p class="lede">{profile.intro[0]}</p>
       <p class="lede">{profile.intro[1]}</p>
     </header>
 
     <section class="weapons-section">
-      <h2>무기</h2>
-      <p class="sec-lede">다섯 가지를 적었습니다. 각 항목에 확인 가능한 근거를 붙였습니다.</p>
+      <h2>핵심 역량</h2>
+      <p class="sec-lede">다섯 가지를 정리했습니다. 각 항목에 확인 가능한 근거를 기재했습니다.</p>
       <ol class="weapons">
         {
           WEAPONS.map((w) => (
@@ -67,7 +67,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
     </section>
 
     <section class="career-section">
-      <h2>어디서 무슨 일을 했나</h2>
+      <h2>경력 사항</h2>
       <p class="sec-lede">{span} 세 개 조직. 담당 업무는 콘텐츠 기획에서 사업개발로 이동했습니다.</p>
 
       {
@@ -145,7 +145,11 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
   }
   h1 {
     font-size: var(--text-display-s);
-    max-width: 16ch;
+  }
+  /* 손으로 끊은 표제 — 조각마다 한 줄. max-width 로 또 자르면
+   * 손으로 정한 줄바꿈이 무너집니다. */
+  h1 .line {
+    display: block;
   }
   .lede {
     margin-top: var(--space-md);
@@ -159,8 +163,8 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
   section > :global(h2) {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: 0;
     margin-bottom: var(--space-2xs);
   }
   section > :global(h2::after) {
@@ -204,7 +208,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
   .weapons h3 {
     font-family: var(--font-display);
     font-size: var(--text-lg);
-    font-weight: 700;
+    font-weight: 500;
   }
   .weapons p {
     margin-top: var(--space-2xs);
@@ -232,7 +236,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
   .company-head h3 {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    font-weight: 700;
+    font-weight: 600;
   }
   .muted {
     color: var(--color-ink-2);
@@ -269,7 +273,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
   }
   .pt {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 500;
   }
   .pm {
     font-size: var(--text-xs);
@@ -302,7 +306,7 @@ const span = first ? `${first.data.start.getFullYear()}년부터` : '';
   .method h3 {
     font-family: var(--font-display);
     font-size: var(--text-md);
-    font-weight: 700;
+    font-weight: 500;
   }
   .method p {
     margin-top: var(--space-3xs);

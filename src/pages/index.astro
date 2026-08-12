@@ -7,7 +7,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AssetRow from '../components/AssetRow.astro';
 import ArcDiagram from '../components/ArcDiagram.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { profile, WEAPONS } from '../lib/profile';
+import { profile, WEAPONS, headlineLines } from '../lib/profile';
 import { GROUP_LABEL, GROUP_NOTE, GROUP_ORDER, type Group } from '../lib/labels';
 
 const assets = (await getCollection('assets', ({ data }) => !data.draft)).sort(
@@ -34,7 +34,7 @@ const oldest = experience[experience.length - 1];
 
 <BaseLayout>
   <section class="lede page">
-    <h1>{profile.headline}</h1>
+    <h1>{headlineLines(profile.headline).map((l) => <span class="line">{l}</span>)}</h1>
     <div class="intro prose">
       {profile.intro.map((line) => <p>{line}</p>)}
     </div>
@@ -74,7 +74,7 @@ const oldest = experience[experience.length - 1];
   </section>
 
   <section class="weapons page">
-    <h2>무기</h2>
+    <h2>핵심 역량</h2>
     <ul>
       {
         WEAPONS.map((w) => (
@@ -120,7 +120,11 @@ const oldest = experience[experience.length - 1];
    * 첫 화면이 확실히 한 단계 위에 있게 됩니다. */
   h1 {
     font-size: var(--text-display);
-    max-width: 17ch;
+  }
+  /* 손으로 끊은 표제 — 조각마다 한 줄입니다.
+   * 좁은 화면에서 조각이 또 넘치면 그때만 자연 줄바꿈이 일어납니다. */
+  h1 .line {
+    display: block;
   }
   .intro {
     margin-top: var(--space-md);
@@ -135,8 +139,8 @@ const oldest = experience[experience.length - 1];
   section > h2 {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: 0;
     margin-bottom: var(--space-2xs);
   }
   section > h2::after {
@@ -172,7 +176,7 @@ const oldest = experience[experience.length - 1];
   }
   .who {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 500;
   }
   .what {
     grid-column: 2;
@@ -228,7 +232,7 @@ const oldest = experience[experience.length - 1];
   }
   .weapons strong {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 500;
   }
   .ev {
     font-size: var(--text-xs);
@@ -260,7 +264,7 @@ const oldest = experience[experience.length - 1];
   }
   .group-label {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     font-size: var(--text-lg);
   }
   .group-note {

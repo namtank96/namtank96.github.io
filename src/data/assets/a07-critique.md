@@ -1,7 +1,7 @@
 ---
 code: A07
 title: 사업성 비판 검토
-summary: 사업기획을 스스로 검증하는 리뷰어. 지적을 결정 목록으로 착지시킨다.
+summary: 사업기획을 스스로 검증하는 리뷰어. 지적이 결정 목록으로 이어지는 구조.
 kind: prompt
 install: 대화창에 붙여넣기
 payload: a07-critique

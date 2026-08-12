@@ -1,7 +1,7 @@
 ---
 code: A08
 title: 회의록 → 결정 · 액션
-summary: 발화 원문과 해석을 분리한 채, 결정·미결·액션·다음 회의 인계로 접는다.
+summary: 발화 원문과 해석을 분리한 채, 결정·미결·액션·다음 회의 인계로 정리.
 kind: prompt
 install: 대화창에 붙여넣기
 payload: a08-meeting-actions
