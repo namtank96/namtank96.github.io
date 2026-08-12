@@ -59,12 +59,15 @@ const step = arcStep(code);
     display: block;
     min-width: 0;
   }
+  /* 섹션 24 → 묶음 라벨 19 → 항목 제목 17 로 내려갑니다.
+   * 이전에는 묶음과 항목이 둘 다 19였고 구분이 웨이트 600↔700 뿐이라
+   * 명조에서 위계가 읽히지 않았습니다. */
   .title {
     display: block;
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-lg);
-    line-height: 1.35;
+    font-weight: 700;
+    font-size: var(--text-md);
+    line-height: 1.4;
     overflow-wrap: anywhere;
   }
   .summary {
@@ -73,6 +76,7 @@ const step = arcStep(code);
     color: var(--color-ink-2);
     font-size: var(--text-sm);
     max-width: 54ch;
+    text-wrap: pretty;
   }
 
   /* 모노는 코드·식별자·콜로폰 세 자리에만 씁니다.

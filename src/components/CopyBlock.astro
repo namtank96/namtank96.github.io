@@ -46,12 +46,17 @@ const lineCount = text.split('\n').length;
     const original = button.dataset.label ?? button.textContent ?? '전체 복사';
     let timer: number | undefined;
 
-    const flash = (message: string) => {
+    // 성공은 조용히(라벨 교체만), 실패는 눈에 띄게.
+    // 둘 다 라벨만 바꾸면 글자를 읽기 전에는 성공과 실패가 똑같아 보입니다.
+    const flash = (message: string, state?: 'alert') => {
       // 빠른 연타 시 라벨이 되돌아오지 않고 멈추는 걸 막습니다.
       if (timer) window.clearTimeout(timer);
       button.textContent = message;
+      if (state) button.dataset.state = state;
+      else delete button.dataset.state;
       timer = window.setTimeout(() => {
         button.textContent = original;
+        delete button.dataset.state;
         timer = undefined;
       }, 2000);
     };
@@ -71,7 +76,7 @@ const lineCount = text.split('\n').length;
           selection?.removeAllRanges();
           selection?.addRange(range);
         }
-        flash('직접 복사하세요 (Ctrl+C)');
+        flash('직접 복사하세요 (Ctrl+C)', 'alert');
         return;
       }
 
@@ -79,7 +84,7 @@ const lineCount = text.split('\n').length;
         await navigator.clipboard.writeText(raw);
         flash('복사됨 ✓');
       } catch {
-        flash('복사 실패');
+        flash('복사 실패', 'alert');
       }
     });
   });
@@ -133,7 +138,15 @@ const lineCount = text.split('\n').length;
     color: var(--color-accent-ink);
   }
   button:active {
-    transform: translateY(1px);
+    scale: 0.96;
+  }
+  /* 실패·수동 복사 안내 — 채움을 비워 쉬는 상태·성공과 확실히 갈라놓습니다.
+   * 글자를 읽기 전에 형태로 먼저 보입니다. */
+  button[data-state='alert'],
+  button[data-state='alert']:hover {
+    background: var(--color-paper);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
   button:disabled {
     opacity: 0.55;

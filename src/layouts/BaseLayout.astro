@@ -144,7 +144,6 @@ const path = Astro.url.pathname;
 
       .mast-line {
         font-size: var(--text-xs);
-        font-variant: small-caps;
         letter-spacing: 0.1em;
         color: var(--color-ink-2);
       }
@@ -165,15 +164,21 @@ const path = Astro.url.pathname;
 
       .mast-nav ul {
         display: flex;
-        gap: var(--space-md);
+        /* 링크 안쪽 여백이 8px 씩 늘었으므로 그만큼 줄여
+         * 눈에 보이는 간격은 그대로 32px 을 유지합니다. */
+        gap: var(--space-sm);
         list-style: none;
         padding: 0;
-        margin-top: var(--space-2xs);
+        margin-top: var(--space-3xs);
         font-size: var(--text-sm);
       }
+      /* 44px 히트 타깃 — 복사 버튼과 같은 기준입니다.
+       * 이전에는 34px 라 손가락 기준에 못 미쳤습니다. */
       .mast-nav a {
-        display: inline-block;
-        padding: var(--space-3xs) var(--space-3xs);
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+        padding-inline: var(--space-2xs);
         color: var(--color-ink-2);
         text-decoration: none;
         white-space: nowrap; /* 클릭 대상은 두 줄로 접히지 않습니다 */
@@ -203,7 +208,7 @@ const path = Astro.url.pathname;
         font-size: var(--text-xs);
         line-height: 1.85;
         color: var(--color-ink-2);
-        max-width: 74ch;
+        max-width: 60ch;
       }
       .colophon a {
         color: inherit;

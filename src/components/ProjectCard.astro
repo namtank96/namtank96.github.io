@@ -30,7 +30,6 @@ const first = (s: string) => (s.split(/(?<=\.)\s/)[0] ?? s).trim();
     border-radius: var(--radius-card);
     background: var(--color-paper);
     text-decoration: none;
-    transition: border-color var(--dur-short) var(--ease-out);
   }
   .pcard:hover {
     border-color: var(--color-ink);
@@ -39,16 +38,27 @@ const first = (s: string) => (s.split(/(?<=\.)\s/)[0] ?? s).trim();
     font-size: var(--text-xs);
     color: var(--color-ink-2);
   }
+  /* 제목에 상시 밑줄을 답니다. hover 로만 클릭 가능함을 알리면
+   * 터치 기기에서는 이 상자가 링크인 줄 알 방법이 없습니다. */
   h3 {
     font-size: var(--text-lg);
     font-weight: 700;
     overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: var(--color-ink-2);
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.22em;
+  }
+  .pcard:hover h3 {
+    text-decoration-color: var(--color-accent);
+    color: var(--color-accent);
   }
   .prob {
     flex: 1;
     font-size: var(--text-sm);
     color: var(--color-ink-2);
     line-height: 1.6;
+    text-wrap: pretty;
   }
   .foot {
     margin-top: var(--space-2xs);

@@ -39,7 +39,6 @@ const lines = payloadLineCount(entry.data.payload);
     border-radius: var(--radius-card);
     background: var(--color-paper);
     text-decoration: none;
-    transition: border-color var(--dur-short) var(--ease-out);
   }
   /* hover 신호는 하나만 — 테두리. 색·이동·그림자를 겹쳐 주지 않습니다. */
   .card:hover {
@@ -52,16 +51,26 @@ const lines = payloadLineCount(entry.data.payload);
     color: var(--color-accent);
   }
 
+  /* 제목에 상시 밑줄을 답니다 — 터치 기기에는 hover 가 없습니다. */
   h3 {
     font-size: var(--text-lg);
     font-weight: 600;
     overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: var(--color-ink-2);
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.22em;
+  }
+  .card:hover h3 {
+    text-decoration-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   .summary {
     color: var(--color-ink-2);
     font-size: var(--text-sm);
     flex: 1;
+    text-wrap: pretty;
   }
 
   .spec {

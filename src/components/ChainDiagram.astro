@@ -5,6 +5,11 @@
  *
  * 사내 화면을 올릴 수 없으니 방법론의 구조를 그립니다.
  * 고객 정보가 하나도 안 들어가면서 "볼 것"이 생깁니다.
+ *
+ * 가로 1벌 / 세로 1벌을 둡니다.
+ * 가로판을 그대로 축소하면 720 폭 기준 17px 라벨이 375 뷰포트에서 8px 로
+ * 떨어져 읽히지 않습니다. 폭이 좁아지면 세로로 쌓아 글자 크기를 지킵니다.
+ * 보이지 않는 쪽은 display:none 이라 접근성 트리에도 안 올라갑니다.
  */
 interface Props {
   steps: [string, string, string];
@@ -12,49 +17,98 @@ interface Props {
   caption?: string;
 }
 const { steps, backLabel = '추적성', caption } = Astro.props;
+const label = `${steps.join(' → ')} 3단 사슬. ${backLabel}은 역방향으로 검증됩니다.`;
+
+/* 가로판 — 상자 3개가 나란히. 상자 중심 x = 110 / 354 / 598 */
+const H = { w: 204, h: 62, y: 30, gap: 244, cx: [110, 354, 598] };
+/* 세로판 — 상자 3개가 위아래로. 상자 중심 y = 35 / 132 / 229 */
+const V = { x: 92, w: 220, h: 54, ys: [8, 105, 202], cx: 202, rail: 44 };
 ---
 
 <figure class="chain">
-  <svg viewBox="0 0 720 170" role="img" aria-label={`${steps.join(' → ')} 3단 사슬. ${backLabel}은 역방향으로 검증됩니다.`}>
+  {/* ── 가로판 (≥ 40rem) ───────────────────────────── */}
+  <svg class="wide" viewBox="0 0 720 170" role="img" aria-label={label}>
     {
       steps.map((s, i) => {
-        const x = 8 + i * 244;
+        const x = 8 + i * H.gap;
         return (
           <g>
-            <rect x={x} y={30} width={204} height={62} rx="2" class="box" />
-            <text x={x + 102} y={67} class="lbl">{s}</text>
+            <rect x={x} y={H.y} width={H.w} height={H.h} rx="2" class="box" />
+            <text x={H.cx[i]} y={H.y + 37} class="lbl">{s}</text>
             {i < 2 && (
               <g class="arrow">
-                <line x1={x + 210} y1={61} x2={x + 236} y2={61} />
-                <polygon points={`${x + 242},61 ${x + 232},56 ${x + 232},66`} />
+                <line x1={x + H.w + 6} y1={61} x2={x + H.w + 32} y2={61} />
+                <polygon points={`${x + H.w + 38},61 ${x + H.w + 28},56 ${x + H.w + 28},66`} />
               </g>
             )}
           </g>
         );
       })
     }
-    {/* 역방향 추적성 */}
+    {/* 역방향 추적성 — 상자 3 중심에서 내려와 상자 1 중심으로 올라갑니다.
+        양끝 모두 상자 아래 8px 에서 시작·도착해 좌우 여백이 같습니다. */}
     <g class="back">
-      <path d="M 620 100 L 620 130 L 110 130 L 110 100" fill="none" />
-      <polygon points="110,94 105,104 115,104" />
-      <rect x="318" y="118" width="94" height="24" rx="2" class="backbg" />
-      <text x="365" y="134" class="backlbl">{backLabel}</text>
+      <path d={`M ${H.cx[2]} 100 L ${H.cx[2]} 130 L ${H.cx[0]} 130 L ${H.cx[0]} 110`} fill="none" />
+      <polygon points={`${H.cx[0]},100 ${H.cx[0] - 5},110 ${H.cx[0] + 5},110`} />
+      <text x={(H.cx[0] + H.cx[2]) / 2} y="134.5" class="backlbl">{backLabel}</text>
     </g>
   </svg>
+
+  {/* ── 세로판 (< 40rem) ───────────────────────────── */}
+  <svg class="narrow" viewBox="0 0 320 264" role="img" aria-label={label}>
+    {
+      steps.map((s, i) => (
+        <g>
+          <rect x={V.x} y={V.ys[i]} width={V.w} height={V.h} rx="2" class="box" />
+          <text x={V.cx} y={V.ys[i] + 33} class="lbl">{s}</text>
+          {i < 2 && (
+            <g class="arrow">
+              <line x1={V.cx} y1={V.ys[i] + V.h + 8} x2={V.cx} y2={V.ys[i] + V.h + 27} />
+              <polygon
+                points={`${V.cx},${V.ys[i] + V.h + 35} ${V.cx - 5},${V.ys[i] + V.h + 25} ${V.cx + 5},${V.ys[i] + V.h + 25}`}
+              />
+            </g>
+          )}
+        </g>
+      ))
+    }
+    <g class="back">
+      <path
+        d={`M ${V.x} ${V.ys[2] + V.h / 2} L ${V.rail} ${V.ys[2] + V.h / 2} L ${V.rail} ${V.ys[0] + V.h / 2} L ${V.x - 8} ${V.ys[0] + V.h / 2}`}
+        fill="none"
+      />
+      <polygon
+        points={`${V.x},${V.ys[0] + V.h / 2} ${V.x - 10},${V.ys[0] + V.h / 2 - 5} ${V.x - 10},${V.ys[0] + V.h / 2 + 5}`}
+      />
+      {/* 레일 위에 세워 붙입니다. 라벨 길이에 상관없이 세로 여유가 충분합니다. */}
+      <g transform={`rotate(-90 ${V.rail} 132)`}>
+        <text x={V.rail} y="136.5" class="backlbl">{backLabel}</text>
+      </g>
+    </g>
+  </svg>
+
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
 <style>
   .chain {
     margin: 0;
+    /* 라벨 뒤 점선을 지우는 색. 이 도식이 놓이는 면과 같아야 합니다.
+     * 밴드(paper-2) 위에 paper 를 깔면 흰 조각처럼 떠 보입니다. */
+    --chain-surface: var(--color-paper-2);
   }
   svg {
     width: 100%;
     height: auto;
-    overflow: visible;
   }
+  .narrow {
+    display: none;
+  }
+
+  /* 상자 안은 면 색과 같습니다 — 윤곽선만으로 그립니다.
+   * 여기만 밝게 하면 도식 안에 흰 조각이 생깁니다. */
   .box {
-    fill: var(--color-paper-2);
+    fill: var(--chain-surface);
     stroke: var(--color-ink);
     stroke-width: 1;
   }
@@ -80,18 +134,33 @@ const { steps, backLabel = '추적성', caption } = Astro.props;
   .back polygon {
     fill: var(--color-accent);
   }
-  .backbg {
-    fill: var(--color-paper);
-  }
+  /* 고정폭 판때기 대신 글자 자체에 면 색 테두리를 둘러 점선을 지웁니다.
+   * 라벨이 길어져도 판이 모자라지 않습니다. */
   .backlbl {
     fill: var(--color-accent);
     font-size: 13px;
     text-anchor: middle;
     font-variant-numeric: tabular-nums;
+    paint-order: stroke;
+    stroke: var(--chain-surface);
+    stroke-width: 5px;
+    stroke-linejoin: round;
   }
+
   figcaption {
     margin-top: var(--space-2xs);
     font-size: var(--text-xs);
     color: var(--color-ink-2);
+  }
+
+  @media (max-width: 40rem) {
+    .wide {
+      display: none;
+    }
+    .narrow {
+      display: block;
+      max-width: 20rem;
+      margin-inline: auto;
+    }
   }
 </style>
