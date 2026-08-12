@@ -12,7 +12,9 @@
     "preview": "astro preview",
     "sanitize": "node scripts/sanitize-check.mjs",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "postbuild": "node scripts/markup-check.mjs",
+    "markup": "node scripts/markup-check.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
